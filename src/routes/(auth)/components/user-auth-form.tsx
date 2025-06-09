@@ -9,11 +9,10 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { config, getConfig } from '@/lib/config';
 import { cn } from '@/lib/utils';
-import axios from 'axios';
 import { type HTMLAttributes, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import axiosInstance, { setAccessToken } from '@/lib/axios';
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>;
 
@@ -36,9 +35,14 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         setIsLoading(true);
 
         try {
-            await axios.post(`${config.api.base_url}/admin/auth/login`, data);
+            const response = await axiosInstance.post('/admin/auth/login', data);
 
-            console.log('Login berhasil');
+            const { access_token, expires_in } = response.data;
+            setAccessToken(access_token, expires_in);
+
+            console.log('Login berhasil', response.data);
+            // TODO: Redirect user ke dashboard atau halaman utama setelah login
+            // Misalnya: router.push('/dashboard');
         } catch (error: any) {
             if (error.response?.status === 422) {
                 const errors = error.response?.data?.errors;
@@ -51,7 +55,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             } else {
                 form.setError('email', {
                     type: 'server',
-                    message: error.response?.data?.message,
+                    message: error.response?.data?.message || 'Terjadi kesalahan saat login.',
                 });
             }
         } finally {
