@@ -2,6 +2,7 @@ import { authMiddleware } from '@/lib/middleware';
 import { Route as LoginIndexRoute } from '@/routes/(auth)/login';
 import { Route as LogoutRoute } from '@/routes/(auth)/logout';
 import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
+import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations';
 import { Route as RootRoute } from '@/routes/__root';
 import { type LoaderFnContext } from '@tanstack/react-router';
 
@@ -26,7 +27,15 @@ const dashboardIndexRoute = DashboardIndexRoute.update({
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
         await authMiddleware({ location });
-        return {};
+    },
+} as any);
+
+const recommendationIndexRoute = RecommendationIndexRoute.update({
+    id: 'recommendation-index',
+    path: '/recommendations',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
     },
 } as any);
 
@@ -35,4 +44,5 @@ export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
     loginIndexRoute,
     logoutRoute,
+    recommendationIndexRoute,
 ]);

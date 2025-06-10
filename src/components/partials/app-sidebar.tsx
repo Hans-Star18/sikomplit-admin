@@ -7,7 +7,7 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { IconLayoutDashboard } from '@tabler/icons-react';
+import { IconFileCheck, IconLayoutDashboard } from '@tabler/icons-react';
 import { Hexagon } from 'lucide-react';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -47,11 +47,11 @@ const navGroups = [
                 url: '/' as const,
                 icon: IconLayoutDashboard,
             },
-            // {
-            //     title: "Tasks",
-            //     url: "/" as const,
-            //     icon: IconChecklist,
-            // },
+            {
+                title: 'Permohonan Surat',
+                url: '/recommendations' as const,
+                icon: IconFileCheck,
+            },
             // {
             //     title: "Secured by Clerk",
             //     icon: IconUsers,

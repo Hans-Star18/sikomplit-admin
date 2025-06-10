@@ -1,4 +1,6 @@
 import { AppSidebar } from '@/components/partials/app-sidebar';
+import { Header } from '@/components/partials/header';
+import { ProfileDropdown } from '@/components/partials/profile-dropdown';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { Outlet } from '@tanstack/react-router';
@@ -26,6 +28,12 @@ export function DashboardLayout({ children }: Props) {
                     'has-[main.fixed-main]:group-data-[scroll-locked=1]/body:h-svh',
                 )}
             >
+                <Header fixed>
+                    <div className="ml-auto flex items-center space-x-4">
+                        <ProfileDropdown />
+                    </div>
+                </Header>
+
                 {children ? children : <Outlet />}
             </div>
         </SidebarProvider>
