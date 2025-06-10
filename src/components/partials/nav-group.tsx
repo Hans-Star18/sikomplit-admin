@@ -1,11 +1,23 @@
-import type { ReactNode } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import type {
+    NavCollapsible,
+    NavGroup,
+    NavItem,
+    NavLink,
+} from '@/components/types';
+import { Badge } from '@/components/ui/badge';
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from '@/components/ui/collapsible';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -16,22 +28,10 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
     useSidebar,
-} from "@/components/ui/sidebar";
-import { Badge } from "@/components/ui/badge";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type {
-    NavCollapsible,
-    NavItem,
-    NavLink,
-    NavGroup,
-} from "@/components/types";
+} from '@/components/ui/sidebar';
+import { Link, useLocation } from '@tanstack/react-router';
+import { ChevronRight } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 export function NavGroup({ title, items }: NavGroup) {
     const { state } = useSidebar();
@@ -52,7 +52,7 @@ export function NavGroup({ title, items }: NavGroup) {
                             />
                         );
 
-                    if (state === "collapsed")
+                    if (state === 'collapsed')
                         return (
                             <SidebarMenuCollapsedDropdown
                                 key={key}
@@ -84,7 +84,7 @@ const SidebarMenuLink = ({ item, href }: { item: NavLink; href: string }) => {
         <SidebarMenuItem>
             <SidebarMenuButton
                 asChild
-                isActive={checkIsActive(href, item)}
+                isActive={checkIsActive(href, item, true)}
                 tooltip={item.title}
             >
                 <Link to={item.url} onClick={() => setOpenMobile(false)}>
@@ -171,7 +171,7 @@ const SidebarMenuCollapsedDropdown = ({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="right" align="start" sideOffset={4}>
                     <DropdownMenuLabel>
-                        {item.title} {item.badge ? `(${item.badge})` : ""}
+                        {item.title} {item.badge ? `(${item.badge})` : ''}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {item.items.map((sub) => (
@@ -181,7 +181,7 @@ const SidebarMenuCollapsedDropdown = ({
                         >
                             <Link
                                 to={sub.url}
-                                className={`${checkIsActive(href, sub) ? "bg-secondary" : ""}`}
+                                className={`${checkIsActive(href, sub) ? 'bg-secondary' : ''}`}
                             >
                                 {sub.icon && <sub.icon />}
                                 <span className="max-w-52 text-wrap">
@@ -204,10 +204,10 @@ const SidebarMenuCollapsedDropdown = ({
 function checkIsActive(href: string, item: NavItem, mainNav = false) {
     return (
         href === item.url || // /endpint?search=param
-        href.split("?")[0] === item.url || // endpoint
+        href.split('?')[0] === item.url || // endpoint
         !!item?.items?.filter((i) => i.url === href).length || // if child nav is active
         (mainNav &&
-            href.split("/")[1] !== "" &&
-            href.split("/")[1] === item?.url?.split("/")[1])
+            href.split('/')[1] !== '' &&
+            href.split('/')[1] === item?.url?.split('/')[1])
     );
 }

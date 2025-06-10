@@ -6,14 +6,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { router } from '@/main';
 import { IconDots, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import { type Row } from '@tanstack/react-table';
 
-interface DataTableRowActionsProps<TData> {
+interface DataTableRowActionsProps<TData extends { id: string | number }> {
     row: Row<TData>;
 }
 
-export function DataTableRowActions<TData>({
+export function DataTableRowActions<TData extends { id: string | number }>({
     row,
 }: DataTableRowActionsProps<TData>) {
     return (
@@ -28,7 +29,14 @@ export function DataTableRowActions<TData>({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem onClick={() => {}}>
+                <DropdownMenuItem
+                    onClick={() => {
+                        router.navigate({
+                            to: '/recommendations/$id',
+                            params: { id: row.original.id },
+                        });
+                    }}
+                >
                     Lihat
                     <DropdownMenuShortcut>
                         <IconEye size={16} />

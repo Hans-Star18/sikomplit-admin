@@ -33,8 +33,9 @@ export function DashboardLayout({ children }: Props) {
                         <ProfileDropdown />
                     </div>
                 </Header>
-
-                {children ? children : <Outlet />}
+                <div className="pt-18 pb-8 px-6">
+                    {children ? children : <Outlet />}
+                </div>
             </div>
         </SidebarProvider>
     );
