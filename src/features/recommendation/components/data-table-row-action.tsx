@@ -33,7 +33,7 @@ export function DataTableRowActions<TData extends { id: string | number }>({
                     onClick={() => {
                         router.navigate({
                             to: '/recommendations/$id',
-                            params: { id: row.original.id },
+                            params: { id: String(row.original.id) },
                         });
                     }}
                 >

@@ -3,6 +3,7 @@ import { Route as LoginIndexRoute } from '@/routes/(auth)/login';
 import { Route as LogoutRoute } from '@/routes/(auth)/logout';
 import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
 import { Route as RecommendationDetailRoute } from '@/routes/(dashboard)/recommendations/$id';
+import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommendations/$id.edit.tsx';
 import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations/index';
 import { Route as RootRoute } from '@/routes/__root';
 import { type LoaderFnContext } from '@tanstack/react-router';
@@ -49,6 +50,15 @@ const recommendationDetailRoute = RecommendationDetailRoute.update({
     },
 } as any);
 
+const recommendationEditRoute = RecommendationEditRoute.update({
+    id: 'recommendation-edit',
+    path: '/recommendations/$id/edit',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -56,4 +66,5 @@ export const routeTree = RootRoute.addChildren([
     logoutRoute,
     recommendationIndexRoute,
     recommendationDetailRoute,
+    recommendationEditRoute,
 ]);

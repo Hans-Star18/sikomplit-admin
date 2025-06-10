@@ -9,6 +9,7 @@ export interface Recommendation {
     research_proposal: string;
     ethics_clearance_letter: string;
     final_report_statement_letter: string;
+    recommendation_letter: string;
     name: string;
     email: string;
     phone: string;

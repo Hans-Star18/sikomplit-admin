@@ -11,16 +11,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { BiodataSection } from '@/features/recommendation/components/biodata-section';
 import { type Recommendation } from '@/features/recommendation/components/types';
 import axiosInstance from '@/lib/axios';
-import { IconArrowLeft, IconDownload, IconPencil } from '@tabler/icons-react';
+import { IconArrowLeft, IconDownload } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 
-import { BiodataSection } from './components/biodata-section';
+export default function RecommendationEdit({ id }: { id: string }) {
+    const [selectedStatus, setSelectedStatus] = useState<string>('');
 
-export default function RecommendationDetail({ id }: { id: string }) {
-    const { data: response } = useQuery({
+    const { data: response, isLoading: isLoadingRecommendation } = useQuery({
         queryKey: ['recommendations', id],
         queryFn: () => {
             return axiosInstance.get<{ data: Recommendation }>(
@@ -29,7 +31,7 @@ export default function RecommendationDetail({ id }: { id: string }) {
         },
     });
 
-    const { data: statusesResponse } = useQuery({
+    const { data: statusesResponse, isLoading: isLoadingStatuses } = useQuery({
         queryKey: ['statuses'],
         queryFn: () => {
             return axiosInstance.get<{
@@ -49,6 +51,16 @@ export default function RecommendationDetail({ id }: { id: string }) {
 
     const recommendation = response?.data.data;
 
+    useEffect(() => {
+        if (recommendation?.progress_status && !selectedStatus) {
+            setSelectedStatus(recommendation.progress_status);
+        }
+    }, [recommendation?.progress_status, selectedStatus]);
+
+    const handleStatusChange = (value: string) => {
+        setSelectedStatus(value);
+    };
+
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
@@ -59,21 +71,12 @@ export default function RecommendationDetail({ id }: { id: string }) {
                     <div className="flex items-center gap-2">
                         <Button>
                             <Link
-                                to="/recommendations"
+                                to="/recommendations/$id"
+                                params={{ id }}
                                 className="flex items-center gap-2"
                             >
                                 <IconArrowLeft className="h-4 w-4" />
                                 Kembali
-                            </Link>
-                        </Button>
-                        <Button variant="outline">
-                            <Link
-                                to="/recommendations/$id/edit"
-                                params={{ id }}
-                                className="flex items-center gap-2"
-                            >
-                                <IconPencil className="h-4 w-4" />
-                                Edit
                             </Link>
                         </Button>
                     </div>
@@ -103,19 +106,36 @@ export default function RecommendationDetail({ id }: { id: string }) {
                 </div>
                 <div className="grid w-full max-w-sm items-center gap-3 mb-4">
                     <Label htmlFor="progress_status">Status Proses</Label>
-                    <Input
-                        disabled
-                        type="text"
-                        id="progress_status"
-                        placeholder="Status Proses"
-                        value={recommendation?.progress_status ?? ''}
-                    />
+                    <Select
+                        defaultValue={selectedStatus}
+                        onValueChange={handleStatusChange}
+                        disabled={isLoadingRecommendation || isLoadingStatuses}
+                    >
+                        <SelectTrigger className="w-full">
+                            <SelectValue
+                                placeholder={
+                                    isLoadingRecommendation || isLoadingStatuses
+                                        ? 'Loading...'
+                                        : selectedStatus || 'Pilih status'
+                                }
+                            />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Status Proses</SelectLabel>
+                                {statuses.map((status) => (
+                                    <SelectItem
+                                        key={status.value}
+                                        value={status.value}
+                                    >
+                                        {status.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
-
-            {recommendation && (
-                <BiodataSection recommendation={recommendation} />
-            )}
 
             <div>
                 <h1 className="font-bold mb-2">Dokumen</h1>
