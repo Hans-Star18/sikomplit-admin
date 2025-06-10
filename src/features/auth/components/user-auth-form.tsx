@@ -9,10 +9,12 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import axiosInstance, { setAccessToken } from '@/lib/axios';
 import { cn } from '@/lib/utils';
+import { router } from '@/main';
+import { IconLoader } from '@tabler/icons-react';
 import { type HTMLAttributes, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axiosInstance, { setAccessToken } from '@/lib/axios';
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>;
 
@@ -35,14 +37,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         setIsLoading(true);
 
         try {
-            const response = await axiosInstance.post('/admin/auth/login', data);
+            const response = await axiosInstance.post(
+                '/admin/auth/login',
+                data,
+            );
 
-            const { access_token, expires_in } = response.data;
+            const { access_token, expires_in } = response.data.data;
             setAccessToken(access_token, expires_in);
 
-            console.log('Login berhasil', response.data);
-            // TODO: Redirect user ke dashboard atau halaman utama setelah login
-            // Misalnya: router.push('/dashboard');
+            router.navigate({
+                to: '/',
+            });
         } catch (error: any) {
             if (error.response?.status === 422) {
                 const errors = error.response?.data?.errors;
@@ -55,7 +60,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             } else {
                 form.setError('email', {
                     type: 'server',
-                    message: error.response?.data?.message || 'Terjadi kesalahan saat login.',
+                    message:
+                        error.response?.data?.message ||
+                        'Terjadi kesalahan saat login.',
                 });
             }
         } finally {
@@ -102,8 +109,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                         </FormItem>
                     )}
                 />
-                <Button className="mt-2" disabled={isLoading}>
-                    Login
+                <Button className="mt-2 flex items-center" disabled={isLoading}>
+                    Login {isLoading && <IconLoader className="animate-spin" />}
                 </Button>
             </form>
         </Form>

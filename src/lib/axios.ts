@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { config } from '@/lib/config';
+import axios from 'axios';
 
 let accessToken: string | null = null;
 let tokenExpirationTime: number | null = null;
@@ -11,14 +11,19 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        if (accessToken && tokenExpirationTime && Date.now() < tokenExpirationTime && config.headers) {
+        if (
+            accessToken &&
+            tokenExpirationTime &&
+            Date.now() < tokenExpirationTime &&
+            config.headers
+        ) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
         return config;
     },
     (error) => {
         return Promise.reject(error);
-    }
+    },
 );
 
 axiosInstance.interceptors.response.use(
@@ -29,40 +34,45 @@ axiosInstance.interceptors.response.use(
         if (
             error.response?.status === 401 &&
             !originalRequest._retry &&
-            originalRequest.url !== `${config.api.base_url}/admin/auth/login` &&
-            originalRequest.url !== `${config.api.base_url}/admin/auth/refresh`
+            !originalRequest.url.includes('/admin/auth/login') &&
+            !originalRequest.url.includes('/admin/auth/refresh')
         ) {
             originalRequest._retry = true;
 
             try {
-                const refreshResponse = await axiosInstance.post('/admin/auth/refresh', {}, {
-                    withCredentials: true,
-                });
+                const refreshResponse = await axiosInstance.post(
+                    '/admin/auth/refresh',
+                    {},
+                    { withCredentials: true },
+                );
 
-                const { access_token: newAccessToken, expires_in: newExpiresIn } = refreshResponse.data;
+                const {
+                    access_token: newAccessToken,
+                    expires_in: newExpiresIn,
+                } = refreshResponse.data.data;
 
                 setAccessToken(newAccessToken, newExpiresIn);
 
                 if (originalRequest.headers) {
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                 }
+
                 return axiosInstance(originalRequest);
             } catch (refreshError: any) {
-                console.error('Gagal me-refresh token:', refreshError);
                 clearAccessToken();
-                clearAccessToken();
-                // TODO: Redirect pengguna ke halaman login, misal:
-                // window.location.href = '/login'; atau router.push('/login');
+                window.location.href = '/login';
                 return Promise.reject(refreshError);
             }
         }
 
         return Promise.reject(error);
-    }
+    },
 );
 
-
-export const setAccessToken = (token: string | null, expiresInSeconds: number | null) => {
+export const setAccessToken = (
+    token: string | null,
+    expiresInSeconds: number | null,
+) => {
     accessToken = token;
     if (expiresInSeconds) {
         tokenExpirationTime = Date.now() + expiresInSeconds * 1000;

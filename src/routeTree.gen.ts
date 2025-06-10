@@ -12,8 +12,8 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as dashboardIndexImport } from './routes/(dashboard)/index'
+import { Route as authLogoutImport } from './routes/(auth)/logout'
 import { Route as authLoginImport } from './routes/(auth)/login'
-import { Route as authComponentsUserAuthFormImport } from './routes/(auth)/components/user-auth-form'
 
 // Create/Update Routes
 
@@ -23,19 +23,17 @@ const dashboardIndexRoute = dashboardIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const authLogoutRoute = authLogoutImport.update({
+  id: '/(auth)/logout',
+  path: '/logout',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const authLoginRoute = authLoginImport.update({
   id: '/(auth)/login',
   path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
-
-const authComponentsUserAuthFormRoute = authComponentsUserAuthFormImport.update(
-  {
-    id: '/(auth)/components/user-auth-form',
-    path: '/components/user-auth-form',
-    getParentRoute: () => rootRoute,
-  } as any,
-)
 
 // Populate the FileRoutesByPath interface
 
@@ -48,18 +46,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginImport
       parentRoute: typeof rootRoute
     }
+    '/(auth)/logout': {
+      id: '/(auth)/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof authLogoutImport
+      parentRoute: typeof rootRoute
+    }
     '/(dashboard)/': {
       id: '/(dashboard)/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof dashboardIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/(auth)/components/user-auth-form': {
-      id: '/(auth)/components/user-auth-form'
-      path: '/components/user-auth-form'
-      fullPath: '/components/user-auth-form'
-      preLoaderRoute: typeof authComponentsUserAuthFormImport
       parentRoute: typeof rootRoute
     }
   }
@@ -69,46 +67,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
+  '/logout': typeof authLogoutRoute
   '/': typeof dashboardIndexRoute
-  '/components/user-auth-form': typeof authComponentsUserAuthFormRoute
 }
 
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
+  '/logout': typeof authLogoutRoute
   '/': typeof dashboardIndexRoute
-  '/components/user-auth-form': typeof authComponentsUserAuthFormRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/(auth)/login': typeof authLoginRoute
+  '/(auth)/logout': typeof authLogoutRoute
   '/(dashboard)/': typeof dashboardIndexRoute
-  '/(auth)/components/user-auth-form': typeof authComponentsUserAuthFormRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/' | '/components/user-auth-form'
+  fullPaths: '/login' | '/logout' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/' | '/components/user-auth-form'
-  id:
-    | '__root__'
-    | '/(auth)/login'
-    | '/(dashboard)/'
-    | '/(auth)/components/user-auth-form'
+  to: '/login' | '/logout' | '/'
+  id: '__root__' | '/(auth)/login' | '/(auth)/logout' | '/(dashboard)/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
+  authLogoutRoute: typeof authLogoutRoute
   dashboardIndexRoute: typeof dashboardIndexRoute
-  authComponentsUserAuthFormRoute: typeof authComponentsUserAuthFormRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
+  authLogoutRoute: authLogoutRoute,
   dashboardIndexRoute: dashboardIndexRoute,
-  authComponentsUserAuthFormRoute: authComponentsUserAuthFormRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,18 +116,18 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/(auth)/login",
-        "/(dashboard)/",
-        "/(auth)/components/user-auth-form"
+        "/(auth)/logout",
+        "/(dashboard)/"
       ]
     },
     "/(auth)/login": {
       "filePath": "(auth)/login.tsx"
     },
+    "/(auth)/logout": {
+      "filePath": "(auth)/logout.tsx"
+    },
     "/(dashboard)/": {
       "filePath": "(dashboard)/index.tsx"
-    },
-    "/(auth)/components/user-auth-form": {
-      "filePath": "(auth)/components/user-auth-form.tsx"
     }
   }
 }

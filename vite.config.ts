@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import path from "path";
+import mkcert from "vite-plugin-mkcert";
 
 export default defineConfig({
     plugins: [
@@ -12,6 +13,7 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
+        mkcert(),
     ],
     server: {
         port: 3000,
