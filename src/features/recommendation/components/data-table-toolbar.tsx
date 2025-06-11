@@ -8,22 +8,18 @@ export function DataTableToolbar<TData>({
     statuses,
     table,
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0;
+    const isFiltered =
+        table.getState().columnFilters.length > 0 ||
+        table.getState().globalFilter.length > 0;
 
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
                 <Input
-                    placeholder="Cari Surat"
-                    value={
-                        (table
-                            .getColumn('request_number')
-                            ?.getFilterValue() as string) ?? ''
-                    }
+                    placeholder="Cari Permohonan"
+                    value={(table.getState().globalFilter as string) ?? ''}
                     onChange={(event) =>
-                        table
-                            .getColumn('request_number')
-                            ?.setFilterValue(event.target.value)
+                        table.setGlobalFilter(event.target.value)
                     }
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
@@ -39,7 +35,10 @@ export function DataTableToolbar<TData>({
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            table.resetColumnFilters();
+                            table.setGlobalFilter('');
+                        }}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset

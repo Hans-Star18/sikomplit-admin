@@ -4,7 +4,7 @@ export interface Recommendation {
     id: string;
     request_number: string;
     research_type: string;
-    progress_status: string;
+    progress_status: string | null | number;
     application_letter: string;
     research_proposal: string;
     ethics_clearance_letter: string;
@@ -17,6 +17,7 @@ export interface Recommendation {
     date_of_birth: string;
     gender: string;
     last_education: string;
+    file_url: string;
     occupation: string;
     created_at: string;
     updated_at: string;
@@ -39,4 +40,9 @@ export interface DataTableProps<TData, TValue> {
         value: string;
         icon?: React.ComponentType<{ className?: string }>;
     }[];
+}
+
+export interface RecommendationEditForm extends Recommendation {
+    progress_status_id: number | null;
+    file: File | null;
 }

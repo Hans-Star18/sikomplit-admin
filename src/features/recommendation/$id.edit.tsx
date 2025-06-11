@@ -1,5 +1,14 @@
 import { Main } from '@/components/partials/main';
 import { Button } from '@/components/ui/button';
+import {
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -11,18 +20,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { BiodataSection } from '@/features/recommendation/components/biodata-section';
 import { type Recommendation } from '@/features/recommendation/components/types';
+import type { RecommendationEditForm } from '@/features/recommendation/components/types';
 import axiosInstance from '@/lib/axios';
-import { IconArrowLeft, IconDownload } from '@tabler/icons-react';
+import { IconArrowLeft, IconDownload, IconLoader } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-export default function RecommendationEdit({ id }: { id: string }) {
-    const [selectedStatus, setSelectedStatus] = useState<string>('');
-
-    const { data: response, isLoading: isLoadingRecommendation } = useQuery({
+const recommendations = (id: string) => {
+    const { data, isLoading } = useQuery({
         queryKey: ['recommendations', id],
         queryFn: () => {
             return axiosInstance.get<{ data: Recommendation }>(
@@ -31,43 +40,122 @@ export default function RecommendationEdit({ id }: { id: string }) {
         },
     });
 
-    const { data: statusesResponse, isLoading: isLoadingStatuses } = useQuery({
+    return {
+        data: data?.data.data,
+        isLoading,
+    };
+};
+
+const statuses = () => {
+    const { data, isLoading } = useQuery({
         queryKey: ['statuses'],
         queryFn: () => {
-            return axiosInstance.get<{
-                data: {
-                    name: string;
-                    code: string;
-                }[];
-            }>('/options/progress-statuses');
+            return axiosInstance.get<{ data: { name: string; id: number }[] }>(
+                '/options/progress-statuses',
+            );
         },
     });
 
-    const statuses =
-        statusesResponse?.data.data.map((status) => ({
+    return {
+        data: data?.data.data.map((status) => ({
             label: status.name,
-            value: status.code,
-        })) ?? [];
+            value: status.id,
+        })),
+        isLoading,
+    };
+};
 
-    const recommendation = response?.data.data;
+export default function RecommendationEdit({ id }: { id: string }) {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const { data: recommendation, isLoading: isLoadingRecommendation } =
+        recommendations(id);
+
+    const { data: statusesData, isLoading: isLoadingStatuses } = statuses();
+
+    const form = useForm<RecommendationEditForm>({
+        defaultValues: {
+            progress_status_id: null,
+            file: null,
+        },
+    });
 
     useEffect(() => {
-        if (recommendation?.progress_status && !selectedStatus) {
-            setSelectedStatus(recommendation.progress_status);
+        if (recommendation?.progress_status) {
+            form.setValue('request_number', recommendation.request_number);
+            form.setValue('research_type', recommendation.research_type);
+            const status = statusesData?.find(
+                (status) => status.label === recommendation.progress_status,
+            );
+            if (status) {
+                form.setValue('progress_status_id', status.value);
+            }
         }
-    }, [recommendation?.progress_status, selectedStatus]);
+    }, [recommendation?.progress_status]);
 
-    const handleStatusChange = (value: string) => {
-        setSelectedStatus(value);
-    };
+    async function onSubmit(data: RecommendationEditForm) {
+        setIsLoading(true);
+
+        try {
+            await axiosInstance.patch(`/admin/recommendations/${id}`, {
+                progress_status_id: data.progress_status_id,
+            });
+
+            if (data.file && data.progress_status_id == 5) {
+                await axiosInstance.post(
+                    `/admin/recommendations/${id}/upload`,
+                    {
+                        file: data.file,
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    },
+                );
+            }
+
+            toast.success('Berhasil memperbarui data.');
+        } catch (error: any) {
+            if (error.response?.status === 422) {
+                const errors = error.response?.data?.errors;
+                for (const key in errors) {
+                    form.setError(key as keyof RecommendationEditForm, {
+                        type: 'server',
+                        message: errors[key][0],
+                    });
+                }
+            } else {
+                toast.error(
+                    error.response?.data?.message ||
+                        'Terjadi kesalahan saat mengubah status.',
+                );
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
                 <div className="flex items-center gap-2 justify-between w-full">
-                    <h2 className="text-2xl font-bold tracking-tight flex-1">
-                        Detail Permohonan Surat Rekomendasi
-                    </h2>
+                    <div>
+                        <h2 className="text-2xl font-bold tracking-tight flex-1">
+                            Edit Permohonan Surat Rekomendasi
+                        </h2>
+                        <p className="text-gray-400 text-sm italic font-light">
+                            Hanya{' '}
+                            <span className="font-semibold text-gray-500">
+                                Status Proses
+                            </span>{' '}
+                            dan{' '}
+                            <span className="font-semibold text-gray-500">
+                                Surat Rekomendasi
+                            </span>{' '}
+                            yang bisa di edit.
+                        </p>
+                    </div>
                     <div className="flex items-center gap-2">
                         <Button>
                             <Link
@@ -76,160 +164,206 @@ export default function RecommendationEdit({ id }: { id: string }) {
                                 className="flex items-center gap-2"
                             >
                                 <IconArrowLeft className="h-4 w-4" />
-                                Kembali
+                                Ke Detail
                             </Link>
                         </Button>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                    <Label htmlFor="request_number">Nomer Permohonan</Label>
-                    <Input
-                        disabled
-                        type="text"
-                        id="request_number"
-                        placeholder="Nomer Permohonan"
-                        value={recommendation?.request_number ?? ''}
-                    />
-                </div>
-                <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                    <Label htmlFor="research_type">Jenis Penelitian</Label>
-                    <Input
-                        disabled
-                        type="text"
-                        id="research_type"
-                        placeholder="Jenis Penelitian"
-                        value={recommendation?.research_type ?? ''}
-                    />
-                </div>
-                <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                    <Label htmlFor="progress_status">Status Proses</Label>
-                    <Select
-                        defaultValue={selectedStatus}
-                        onValueChange={handleStatusChange}
-                        disabled={isLoadingRecommendation || isLoadingStatuses}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue
-                                placeholder={
-                                    isLoadingRecommendation || isLoadingStatuses
-                                        ? 'Loading...'
-                                        : selectedStatus || 'Pilih status'
-                                }
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Status Proses</SelectLabel>
-                                {statuses.map((status) => (
-                                    <SelectItem
-                                        key={status.value}
-                                        value={status.value}
+            <Form {...form}>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    encType="multipart/form-data"
+                >
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                        <FormField
+                            control={form.control}
+                            name="request_number"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nomer Permohonan</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled
+                                            type="text"
+                                            id="request_number"
+                                            placeholder="Nomer Permohonan"
+                                            defaultValue={field.value}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="research_type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Jenis Penelitian</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled
+                                            type="text"
+                                            id="research_type"
+                                            placeholder="Jenis Penelitian"
+                                            defaultValue={field.value}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="progress_status_id"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Status Proses</FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={
+                                                field.value?.toString() ?? ''
+                                            }
+                                            disabled={
+                                                isLoadingRecommendation ||
+                                                isLoadingStatuses
+                                            }
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue
+                                                    placeholder={
+                                                        isLoadingRecommendation ||
+                                                        isLoadingStatuses
+                                                            ? 'Loading...'
+                                                            : 'Pilih status'
+                                                    }
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>
+                                                        Status Proses
+                                                    </SelectLabel>
+                                                    {statusesData?.map(
+                                                        (status) => (
+                                                            <SelectItem
+                                                                key={
+                                                                    status.value
+                                                                }
+                                                                value={status.value.toString()}
+                                                            >
+                                                                {status.label}
+                                                            </SelectItem>
+                                                        ),
+                                                    )}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div>
+                        <h1 className="font-bold mb-2">Dokumen</h1>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                            <div>
+                                <FormField
+                                    control={form.control}
+                                    name="file"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Surat Rekomendasi
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    disabled={
+                                                        form.watch(
+                                                            'progress_status_id',
+                                                        ) != 5
+                                                    }
+                                                    type="file"
+                                                    id="file"
+                                                    placeholder="Surat Rekomendasi"
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        form.setValue(
+                                                            'file',
+                                                            e.target
+                                                                .files?.[0] ||
+                                                                null,
+                                                        );
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            {form.watch('progress_status_id') !=
+                                                5 && (
+                                                <FormDescription className="text-sm text-gray-500 italic font-light">
+                                                    Surat Rekomendasi bisa di
+                                                    tambahkan jika statusnya
+                                                    sudah disetujui &
+                                                    diterbitkan.
+                                                </FormDescription>
+                                            )}
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                {recommendation?.recommendation_letter && (
+                                    <a
+                                        className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2 mt-2"
+                                        href={
+                                            recommendation?.recommendation_letter
+                                        }
+                                        download="surat_rekomendasi.pdf"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                     >
-                                        {status.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
+                                        <IconDownload className="h-4 w-4" />
+                                        Unduh Surat Rekomendasi
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
-            <div>
-                <h1 className="font-bold mb-2">Dokumen</h1>
+                    <div className="flex gap-4">
+                        <Button
+                            className="mt-2 flex items-center"
+                            disabled={isLoading}
+                            type="button"
+                        >
+                            <Link
+                                to="/recommendations"
+                                className="flex items-center gap-2"
+                            >
+                                <IconArrowLeft className="h-4 w-4" />
+                                Kembali
+                            </Link>
+                        </Button>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    {recommendation?.application_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                            <Label htmlFor="request_number">
-                                Surat Permohonan
-                            </Label>
-                            <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
-                                href={recommendation?.application_letter}
-                                download="surat_permohonan.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <IconDownload className="h-4 w-4" />
-                                Unduh Surat Permohonan
-                            </a>
-                        </div>
-                    )}
-                    {recommendation?.research_proposal && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                            <Label htmlFor="research_type">
-                                Proposal Penelitian
-                            </Label>
-                            <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
-                                href={recommendation?.research_proposal}
-                                download="proposal_penelitian.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <IconDownload className="h-4 w-4" />
-                                Unduh Proposal Penelitian
-                            </a>
-                        </div>
-                    )}
-                    {recommendation?.ethics_clearance_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                            <Label htmlFor="research_type">
-                                Surat Keterangan Etika
-                            </Label>
-                            <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
-                                href={recommendation?.ethics_clearance_letter}
-                                download="surat_keterangan_etika.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <IconDownload className="h-4 w-4" />
-                                Unduh Surat Keterangan Etika
-                            </a>
-                        </div>
-                    )}
-                    {recommendation?.final_report_statement_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                            <Label htmlFor="research_type">
-                                Pernyataan Penyerahan Penelitian
-                            </Label>
-                            <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
-                                href={
-                                    recommendation?.final_report_statement_letter
-                                }
-                                download="pernyataan_penyerahan_penelitian.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <IconDownload className="h-4 w-4" />
-                                Unduh Pernyataan Penyerahan Penelitian
-                            </a>
-                        </div>
-                    )}
-                    {recommendation?.recommendation_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
-                            <Label htmlFor="research_type">
-                                Surat Rekomendasi
-                            </Label>
-                            <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
-                                href={recommendation?.recommendation_letter}
-                                download="surat_rekomendasi.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <IconDownload className="h-4 w-4" />
-                                Unduh Surat Rekomendasi
-                            </a>
-                        </div>
-                    )}
-                </div>
-            </div>
+                        <Button
+                            className="mt-2 flex items-center bg-blue-500 hover:bg-blue-600 text-white"
+                            disabled={isLoading}
+                            type="submit"
+                            onClick={() => {
+                                form.handleSubmit(onSubmit);
+                            }}
+                        >
+                            Simpan{' '}
+                            {isLoading && (
+                                <IconLoader className="animate-spin" />
+                            )}
+                        </Button>
+                    </div>
+                </form>
+            </Form>
         </Main>
     );
 }

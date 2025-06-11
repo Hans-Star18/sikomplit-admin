@@ -35,6 +35,7 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [globalFilter, setGlobalFilter] = React.useState('');
 
     const table = useReactTable({
         data,
@@ -44,18 +45,27 @@ export function DataTable<TData, TValue>({
             columnVisibility,
             rowSelection,
             columnFilters,
+            globalFilter,
         },
         enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
+        onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        globalFilterFn: (row, columnId, filterValue) => {
+            if (columnId === 'request_number' || columnId === 'research_type') {
+                const cellValue = String(row.getValue(columnId)).toLowerCase();
+                return cellValue.includes(String(filterValue).toLowerCase());
+            }
+            return false;
+        },
     });
 
     return (

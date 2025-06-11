@@ -7,7 +7,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { router } from '@/main';
-import { IconDots, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
+import { IconDots, IconEye, IconPencil } from '@tabler/icons-react';
 import { type Row } from '@tanstack/react-table';
 
 interface DataTableRowActionsProps<TData extends { id: string | number }> {
@@ -42,18 +42,25 @@ export function DataTableRowActions<TData extends { id: string | number }>({
                         <IconEye size={16} />
                     </DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {}}>
+                <DropdownMenuItem
+                    onClick={() => {
+                        router.navigate({
+                            to: '/recommendations/$id/edit',
+                            params: { id: String(row.original.id) },
+                        });
+                    }}
+                >
                     Ubah
                     <DropdownMenuShortcut>
                         <IconPencil size={16} />
                     </DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {}}>
+                {/* <DropdownMenuItem onClick={() => {}}>
                     Hapus
                     <DropdownMenuShortcut>
                         <IconTrash size={16} />
                     </DropdownMenuShortcut>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
             </DropdownMenuContent>
         </DropdownMenu>
     );
