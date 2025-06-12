@@ -8,26 +8,29 @@ interface AuthMiddlewareOptions {
     };
 }
 
+const checkAuthStatus = async () => {
+    try {
+        const response = await axiosInstance.get('/user/auth/check');
+        return response.status === 200;
+    } catch (error: any) {
+        return false;
+    }
+};
+
 export async function authMiddleware(opts: AuthMiddlewareOptions) {
     const { location } = opts;
-
-    let token = getAccessToken();
+    const token = getAccessToken();
 
     if (!token) {
-        try {
-            await axiosInstance.get('/user/auth/check');
-            token = getAccessToken();
-            if (!token) {
-                throw redirect({
-                    to: '/login',
-                    search: { redirect: location.pathname },
-                });
-            }
-        } catch (error: any) {
+        const isAuthenticated = await checkAuthStatus();
+
+        if (!isAuthenticated) {
             throw redirect({
                 to: '/login',
                 search: { redirect: location.pathname },
             });
         }
     }
+
+    return true;
 }

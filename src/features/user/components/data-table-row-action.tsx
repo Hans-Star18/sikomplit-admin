@@ -32,7 +32,7 @@ export function DataTableRowActions<TData extends { id: string | number }>({
                 <DropdownMenuItem
                     onClick={() => {
                         router.navigate({
-                            to: '/recommendations/$id',
+                            to: '/users/$id',
                             params: { id: String(row.original.id) },
                         });
                     }}
@@ -45,7 +45,7 @@ export function DataTableRowActions<TData extends { id: string | number }>({
                 <DropdownMenuItem
                     onClick={() => {
                         router.navigate({
-                            to: '/recommendations/$id/edit',
+                            to: '/users/$id/edit',
                             params: { id: String(row.original.id) },
                         });
                     }}
