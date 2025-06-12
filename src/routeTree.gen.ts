@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as dashboardIndexImport } from './routes/(dashboard)/index'
 import { Route as authLogoutImport } from './routes/(auth)/logout'
 import { Route as authLoginImport } from './routes/(auth)/login'
+import { Route as dashboardUsersIndexImport } from './routes/(dashboard)/users/index'
 import { Route as dashboardRecommendationsIndexImport } from './routes/(dashboard)/recommendations/index'
 import { Route as dashboardRecommendationsIdImport } from './routes/(dashboard)/recommendations/$id'
 import { Route as dashboardRecommendationsIdEditImport } from './routes/(dashboard)/recommendations/$id.edit'
@@ -35,6 +36,12 @@ const authLogoutRoute = authLogoutImport.update({
 const authLoginRoute = authLoginImport.update({
   id: '/(auth)/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const dashboardUsersIndexRoute = dashboardUsersIndexImport.update({
+  id: '/(dashboard)/users/',
+  path: '/users/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -99,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardRecommendationsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/(dashboard)/users/': {
+      id: '/(dashboard)/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof dashboardUsersIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/(dashboard)/recommendations/$id/edit': {
       id: '/(dashboard)/recommendations/$id/edit'
       path: '/edit'
@@ -131,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/': typeof dashboardIndexRoute
   '/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
   '/recommendations': typeof dashboardRecommendationsIndexRoute
+  '/users': typeof dashboardUsersIndexRoute
   '/recommendations/$id/edit': typeof dashboardRecommendationsIdEditRoute
 }
 
@@ -140,6 +155,7 @@ export interface FileRoutesByTo {
   '/': typeof dashboardIndexRoute
   '/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
   '/recommendations': typeof dashboardRecommendationsIndexRoute
+  '/users': typeof dashboardUsersIndexRoute
   '/recommendations/$id/edit': typeof dashboardRecommendationsIdEditRoute
 }
 
@@ -150,6 +166,7 @@ export interface FileRoutesById {
   '/(dashboard)/': typeof dashboardIndexRoute
   '/(dashboard)/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
   '/(dashboard)/recommendations/': typeof dashboardRecommendationsIndexRoute
+  '/(dashboard)/users/': typeof dashboardUsersIndexRoute
   '/(dashboard)/recommendations/$id/edit': typeof dashboardRecommendationsIdEditRoute
 }
 
@@ -161,6 +178,7 @@ export interface FileRouteTypes {
     | '/'
     | '/recommendations/$id'
     | '/recommendations'
+    | '/users'
     | '/recommendations/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -169,6 +187,7 @@ export interface FileRouteTypes {
     | '/'
     | '/recommendations/$id'
     | '/recommendations'
+    | '/users'
     | '/recommendations/$id/edit'
   id:
     | '__root__'
@@ -177,6 +196,7 @@ export interface FileRouteTypes {
     | '/(dashboard)/'
     | '/(dashboard)/recommendations/$id'
     | '/(dashboard)/recommendations/'
+    | '/(dashboard)/users/'
     | '/(dashboard)/recommendations/$id/edit'
   fileRoutesById: FileRoutesById
 }
@@ -187,6 +207,7 @@ export interface RootRouteChildren {
   dashboardIndexRoute: typeof dashboardIndexRoute
   dashboardRecommendationsIdRoute: typeof dashboardRecommendationsIdRouteWithChildren
   dashboardRecommendationsIndexRoute: typeof dashboardRecommendationsIndexRoute
+  dashboardUsersIndexRoute: typeof dashboardUsersIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -195,6 +216,7 @@ const rootRouteChildren: RootRouteChildren = {
   dashboardIndexRoute: dashboardIndexRoute,
   dashboardRecommendationsIdRoute: dashboardRecommendationsIdRouteWithChildren,
   dashboardRecommendationsIndexRoute: dashboardRecommendationsIndexRoute,
+  dashboardUsersIndexRoute: dashboardUsersIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -211,7 +233,8 @@ export const routeTree = rootRoute
         "/(auth)/logout",
         "/(dashboard)/",
         "/(dashboard)/recommendations/$id",
-        "/(dashboard)/recommendations/"
+        "/(dashboard)/recommendations/",
+        "/(dashboard)/users/"
       ]
     },
     "/(auth)/login": {
@@ -231,6 +254,9 @@ export const routeTree = rootRoute
     },
     "/(dashboard)/recommendations/": {
       "filePath": "(dashboard)/recommendations/index.tsx"
+    },
+    "/(dashboard)/users/": {
+      "filePath": "(dashboard)/users/index.tsx"
     },
     "/(dashboard)/recommendations/$id/edit": {
       "filePath": "(dashboard)/recommendations/$id.edit.tsx",

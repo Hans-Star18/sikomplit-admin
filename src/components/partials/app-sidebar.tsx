@@ -7,7 +7,11 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { IconFileCheck, IconLayoutDashboard } from '@tabler/icons-react';
+import {
+    IconFileCheck,
+    IconLayoutDashboard,
+    IconUsers,
+} from '@tabler/icons-react';
 import { Hexagon } from 'lucide-react';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -51,6 +55,11 @@ const navGroups = [
                 title: 'Permohonan Surat',
                 url: '/recommendations' as const,
                 icon: IconFileCheck,
+            },
+            {
+                title: 'Pengguna',
+                url: '/users' as const,
+                icon: IconUsers,
             },
             // {
             //     title: "Secured by Clerk",

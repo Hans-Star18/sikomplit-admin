@@ -5,6 +5,7 @@ import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
 import { Route as RecommendationDetailRoute } from '@/routes/(dashboard)/recommendations/$id';
 import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommendations/$id.edit.tsx';
 import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations/index';
+import { Route as UserIndexRoute } from '@/routes/(dashboard)/users/index';
 import { Route as RootRoute } from '@/routes/__root';
 import { type LoaderFnContext } from '@tanstack/react-router';
 
@@ -59,6 +60,15 @@ const recommendationEditRoute = RecommendationEditRoute.update({
     },
 } as any);
 
+const userIndexRoute = UserIndexRoute.update({
+    id: 'user-index',
+    path: '/users',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -67,4 +77,5 @@ export const routeTree = RootRoute.addChildren([
     recommendationIndexRoute,
     recommendationDetailRoute,
     recommendationEditRoute,
+    userIndexRoute,
 ]);
