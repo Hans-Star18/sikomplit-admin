@@ -16,7 +16,9 @@ import { Route as authLogoutImport } from './routes/(auth)/logout'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as dashboardUsersIndexImport } from './routes/(dashboard)/users/index'
 import { Route as dashboardRecommendationsIndexImport } from './routes/(dashboard)/recommendations/index'
+import { Route as dashboardUsersIdImport } from './routes/(dashboard)/users/$id'
 import { Route as dashboardRecommendationsIdImport } from './routes/(dashboard)/recommendations/$id'
+import { Route as dashboardUsersIdEditImport } from './routes/(dashboard)/users/$id.edit'
 import { Route as dashboardRecommendationsIdEditImport } from './routes/(dashboard)/recommendations/$id.edit'
 
 // Create/Update Routes
@@ -52,6 +54,12 @@ const dashboardRecommendationsIndexRoute =
     getParentRoute: () => rootRoute,
   } as any)
 
+const dashboardUsersIdRoute = dashboardUsersIdImport.update({
+  id: '/(dashboard)/users/$id',
+  path: '/users/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const dashboardRecommendationsIdRoute = dashboardRecommendationsIdImport.update(
   {
     id: '/(dashboard)/recommendations/$id',
@@ -59,6 +67,12 @@ const dashboardRecommendationsIdRoute = dashboardRecommendationsIdImport.update(
     getParentRoute: () => rootRoute,
   } as any,
 )
+
+const dashboardUsersIdEditRoute = dashboardUsersIdEditImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => dashboardUsersIdRoute,
+} as any)
 
 const dashboardRecommendationsIdEditRoute =
   dashboardRecommendationsIdEditImport.update({
@@ -99,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardRecommendationsIdImport
       parentRoute: typeof rootRoute
     }
+    '/(dashboard)/users/$id': {
+      id: '/(dashboard)/users/$id'
+      path: '/users/$id'
+      fullPath: '/users/$id'
+      preLoaderRoute: typeof dashboardUsersIdImport
+      parentRoute: typeof rootRoute
+    }
     '/(dashboard)/recommendations/': {
       id: '/(dashboard)/recommendations/'
       path: '/recommendations'
@@ -120,6 +141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardRecommendationsIdEditImport
       parentRoute: typeof dashboardRecommendationsIdImport
     }
+    '/(dashboard)/users/$id/edit': {
+      id: '/(dashboard)/users/$id/edit'
+      path: '/edit'
+      fullPath: '/users/$id/edit'
+      preLoaderRoute: typeof dashboardUsersIdEditImport
+      parentRoute: typeof dashboardUsersIdImport
+    }
   }
 }
 
@@ -139,14 +167,27 @@ const dashboardRecommendationsIdRouteWithChildren =
     dashboardRecommendationsIdRouteChildren,
   )
 
+interface dashboardUsersIdRouteChildren {
+  dashboardUsersIdEditRoute: typeof dashboardUsersIdEditRoute
+}
+
+const dashboardUsersIdRouteChildren: dashboardUsersIdRouteChildren = {
+  dashboardUsersIdEditRoute: dashboardUsersIdEditRoute,
+}
+
+const dashboardUsersIdRouteWithChildren =
+  dashboardUsersIdRoute._addFileChildren(dashboardUsersIdRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/logout': typeof authLogoutRoute
   '/': typeof dashboardIndexRoute
   '/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
+  '/users/$id': typeof dashboardUsersIdRouteWithChildren
   '/recommendations': typeof dashboardRecommendationsIndexRoute
   '/users': typeof dashboardUsersIndexRoute
   '/recommendations/$id/edit': typeof dashboardRecommendationsIdEditRoute
+  '/users/$id/edit': typeof dashboardUsersIdEditRoute
 }
 
 export interface FileRoutesByTo {
@@ -154,9 +195,11 @@ export interface FileRoutesByTo {
   '/logout': typeof authLogoutRoute
   '/': typeof dashboardIndexRoute
   '/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
+  '/users/$id': typeof dashboardUsersIdRouteWithChildren
   '/recommendations': typeof dashboardRecommendationsIndexRoute
   '/users': typeof dashboardUsersIndexRoute
   '/recommendations/$id/edit': typeof dashboardRecommendationsIdEditRoute
+  '/users/$id/edit': typeof dashboardUsersIdEditRoute
 }
 
 export interface FileRoutesById {
@@ -165,9 +208,11 @@ export interface FileRoutesById {
   '/(auth)/logout': typeof authLogoutRoute
   '/(dashboard)/': typeof dashboardIndexRoute
   '/(dashboard)/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
+  '/(dashboard)/users/$id': typeof dashboardUsersIdRouteWithChildren
   '/(dashboard)/recommendations/': typeof dashboardRecommendationsIndexRoute
   '/(dashboard)/users/': typeof dashboardUsersIndexRoute
   '/(dashboard)/recommendations/$id/edit': typeof dashboardRecommendationsIdEditRoute
+  '/(dashboard)/users/$id/edit': typeof dashboardUsersIdEditRoute
 }
 
 export interface FileRouteTypes {
@@ -177,27 +222,33 @@ export interface FileRouteTypes {
     | '/logout'
     | '/'
     | '/recommendations/$id'
+    | '/users/$id'
     | '/recommendations'
     | '/users'
     | '/recommendations/$id/edit'
+    | '/users/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/logout'
     | '/'
     | '/recommendations/$id'
+    | '/users/$id'
     | '/recommendations'
     | '/users'
     | '/recommendations/$id/edit'
+    | '/users/$id/edit'
   id:
     | '__root__'
     | '/(auth)/login'
     | '/(auth)/logout'
     | '/(dashboard)/'
     | '/(dashboard)/recommendations/$id'
+    | '/(dashboard)/users/$id'
     | '/(dashboard)/recommendations/'
     | '/(dashboard)/users/'
     | '/(dashboard)/recommendations/$id/edit'
+    | '/(dashboard)/users/$id/edit'
   fileRoutesById: FileRoutesById
 }
 
@@ -206,6 +257,7 @@ export interface RootRouteChildren {
   authLogoutRoute: typeof authLogoutRoute
   dashboardIndexRoute: typeof dashboardIndexRoute
   dashboardRecommendationsIdRoute: typeof dashboardRecommendationsIdRouteWithChildren
+  dashboardUsersIdRoute: typeof dashboardUsersIdRouteWithChildren
   dashboardRecommendationsIndexRoute: typeof dashboardRecommendationsIndexRoute
   dashboardUsersIndexRoute: typeof dashboardUsersIndexRoute
 }
@@ -215,6 +267,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLogoutRoute: authLogoutRoute,
   dashboardIndexRoute: dashboardIndexRoute,
   dashboardRecommendationsIdRoute: dashboardRecommendationsIdRouteWithChildren,
+  dashboardUsersIdRoute: dashboardUsersIdRouteWithChildren,
   dashboardRecommendationsIndexRoute: dashboardRecommendationsIndexRoute,
   dashboardUsersIndexRoute: dashboardUsersIndexRoute,
 }
@@ -233,6 +286,7 @@ export const routeTree = rootRoute
         "/(auth)/logout",
         "/(dashboard)/",
         "/(dashboard)/recommendations/$id",
+        "/(dashboard)/users/$id",
         "/(dashboard)/recommendations/",
         "/(dashboard)/users/"
       ]
@@ -252,6 +306,12 @@ export const routeTree = rootRoute
         "/(dashboard)/recommendations/$id/edit"
       ]
     },
+    "/(dashboard)/users/$id": {
+      "filePath": "(dashboard)/users/$id.tsx",
+      "children": [
+        "/(dashboard)/users/$id/edit"
+      ]
+    },
     "/(dashboard)/recommendations/": {
       "filePath": "(dashboard)/recommendations/index.tsx"
     },
@@ -261,6 +321,10 @@ export const routeTree = rootRoute
     "/(dashboard)/recommendations/$id/edit": {
       "filePath": "(dashboard)/recommendations/$id.edit.tsx",
       "parent": "/(dashboard)/recommendations/$id"
+    },
+    "/(dashboard)/users/$id/edit": {
+      "filePath": "(dashboard)/users/$id.edit.tsx",
+      "parent": "/(dashboard)/users/$id"
     }
   }
 }
