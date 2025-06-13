@@ -10,15 +10,13 @@ import { router } from '@/main';
 import { IconDots, IconEye, IconPencil } from '@tabler/icons-react';
 import { type Row } from '@tanstack/react-table';
 
-interface DataTableRowActionsProps<
-    TData extends { id: string | number; title: string },
-> {
+interface DataTableRowActionsProps<TData extends { slug: string }> {
     row: Row<TData>;
 }
 
-export function DataTableRowActions<
-    TData extends { id: string | number; title: string },
->({ row }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData extends { slug: string }>({
+    row,
+}: DataTableRowActionsProps<TData>) {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
@@ -34,8 +32,8 @@ export function DataTableRowActions<
                 <DropdownMenuItem
                     onClick={() => {
                         router.navigate({
-                            to: '/research/$id',
-                            params: { id: String(row.original.id) },
+                            to: '/research/$slug',
+                            params: { slug: String(row.original.slug) },
                         });
                     }}
                 >
@@ -47,8 +45,8 @@ export function DataTableRowActions<
                 <DropdownMenuItem
                     onClick={() => {
                         router.navigate({
-                            to: '/research/$id/edit',
-                            params: { id: String(row.original.id) },
+                            to: '/research/$slug/edit',
+                            params: { slug: String(row.original.slug) },
                         });
                     }}
                 >
