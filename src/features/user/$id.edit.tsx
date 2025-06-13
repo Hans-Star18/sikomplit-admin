@@ -1,14 +1,13 @@
 import { Main } from '@/components/partials/main';
 import { Button } from '@/components/ui/button';
 import {
+    Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -19,23 +18,24 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { type Recommendation } from '@/features/recommendation/components/types';
-import type { RecommendationEditForm } from '@/features/recommendation/components/types';
+import { type User, type UserEditForm } from '@/features/user/components/types';
 import axiosInstance from '@/lib/axios';
-import { IconArrowLeft, IconDownload, IconLoader } from '@tabler/icons-react';
+import {
+    IconArrowLeft,
+    IconDeviceFloppy,
+    IconLoader,
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-const recommendations = (id: string) => {
+const getUser = (id: string) => {
     const { data, isLoading } = useQuery({
-        queryKey: ['recommendations', id],
+        queryKey: ['user', id],
         queryFn: () => {
-            return axiosInstance.get<{ data: Recommendation }>(
-                `/admin/recommendations/${id}`,
-            );
+            return axiosInstance.get<{ data: User }>(`/admin/users/${id}`);
         },
     });
 
@@ -45,81 +45,51 @@ const recommendations = (id: string) => {
     };
 };
 
-const statuses = () => {
-    const { data, isLoading } = useQuery({
-        queryKey: ['statuses'],
-        queryFn: () => {
-            return axiosInstance.get<{ data: { name: string; id: number }[] }>(
-                '/options/progress-statuses',
-            );
-        },
-    });
+export default function UserEdit({ id }: { id: string }) {
+    const { data: user } = getUser(id);
+    const [isLoading, setIsLoading] = useState(false);
 
-    return {
-        data: data?.data.data.map((status) => ({
-            label: status.name,
-            value: status.id,
-        })),
-        isLoading,
-    };
-};
-
-export default function RecommendationEdit({ id }: { id: string }) {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    const { data: recommendation, isLoading: isLoadingRecommendation } =
-        recommendations(id);
-
-    const { data: statusesData, isLoading: isLoadingStatuses } = statuses();
-
-    const form = useForm<RecommendationEditForm>({
+    const form = useForm<UserEditForm>({
         defaultValues: {
-            progress_status_id: null,
-            file: null,
+            name: '',
+            email: '',
+            phone: '',
+            role_id: 0,
         },
     });
 
     useEffect(() => {
-        if (recommendation?.progress_status) {
-            form.setValue('request_number', recommendation.request_number);
-            form.setValue('research_type', recommendation.research_type);
-            const status = statusesData?.find(
-                (status) => status.label === recommendation.progress_status,
-            );
-            if (status) {
-                form.setValue('progress_status_id', status.value);
-            }
+        if (user) {
+            form.setValue('name', user.name);
+            form.setValue('email', user.email);
+            form.setValue('phone', user.phone);
+            form.setValue('role_id', user.role.id);
         }
-    }, [recommendation?.progress_status]);
+    }, [user]);
 
-    async function onSubmit(data: RecommendationEditForm) {
+    const roles = [
+        {
+            id: 1,
+            name: 'Admin',
+        },
+        {
+            id: 2,
+            name: 'User',
+        },
+    ];
+
+    async function onSubmit(data: UserEditForm) {
         setIsLoading(true);
 
         try {
-            await axiosInstance.patch(`/admin/recommendations/${id}`, {
-                progress_status_id: data.progress_status_id,
-            });
-
-            if (data.file && data.progress_status_id == 5) {
-                await axiosInstance.post(
-                    `/admin/recommendations/${id}/upload`,
-                    {
-                        file: data.file,
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    },
-                );
-            }
+            await axiosInstance.put(`/admin/users/${id}`, data);
 
             toast.success('Berhasil memperbarui data.');
         } catch (error: any) {
             if (error.response?.status === 422) {
                 const errors = error.response?.data?.errors;
                 for (const key in errors) {
-                    form.setError(key as keyof RecommendationEditForm, {
+                    form.setError(key as keyof UserEditForm, {
                         type: 'server',
                         message: errors[key][0],
                     });
@@ -127,7 +97,7 @@ export default function RecommendationEdit({ id }: { id: string }) {
             } else {
                 toast.error(
                     error.response?.data?.message ||
-                        'Terjadi kesalahan saat mengubah status.',
+                        'Terjadi kesalahan saat mengubah data.',
                 );
             }
         } finally {
@@ -139,56 +109,42 @@ export default function RecommendationEdit({ id }: { id: string }) {
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
                 <div className="flex items-center gap-2 justify-between w-full">
-                    <div>
-                        <h2 className="text-2xl font-bold tracking-tight flex-1">
-                            Edit Permohonan Surat Rekomendasi
-                        </h2>
-                        <p className="text-gray-400 text-sm italic font-light">
-                            Hanya{' '}
-                            <span className="font-semibold text-gray-500">
-                                Status Proses
-                            </span>{' '}
-                            dan{' '}
-                            <span className="font-semibold text-gray-500">
-                                Surat Rekomendasi
-                            </span>{' '}
-                            yang bisa di edit.
-                        </p>
-                    </div>
+                    <h2 className="text-2xl font-bold tracking-tight flex-1">
+                        Edit User
+                    </h2>
                     <div className="flex items-center gap-2">
-                        <Button>
-                            <Link
-                                to="/recommendations/$id"
-                                params={{ id }}
-                                className="flex items-center gap-2"
-                            >
-                                <IconArrowLeft className="h-4 w-4" />
-                                Ke Detail
-                            </Link>
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button>
+                                <Link
+                                    to="/users/$id"
+                                    params={{ id }}
+                                    className="flex items-center gap-2"
+                                >
+                                    <IconArrowLeft className="h-4 w-4" />
+                                    Ke Detail
+                                </Link>
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    encType="multipart/form-data"
-                >
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
                         <FormField
                             control={form.control}
-                            name="request_number"
+                            name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Nomer Permohonan</FormLabel>
+                                    <FormLabel>Nama</FormLabel>
                                     <FormControl>
                                         <Input
-                                            disabled
                                             type="text"
-                                            id="request_number"
-                                            placeholder="Nomer Permohonan"
+                                            id="name"
+                                            placeholder="Nama"
                                             defaultValue={field.value}
+                                            onChange={field.onChange}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -197,17 +153,17 @@ export default function RecommendationEdit({ id }: { id: string }) {
                         />
                         <FormField
                             control={form.control}
-                            name="research_type"
+                            name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Jenis Penelitian</FormLabel>
+                                    <FormLabel>Email</FormLabel>
                                     <FormControl>
                                         <Input
-                                            disabled
                                             type="text"
-                                            id="research_type"
-                                            placeholder="Jenis Penelitian"
+                                            id="email"
+                                            placeholder="Email"
                                             defaultValue={field.value}
+                                            onChange={field.onChange}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -216,48 +172,52 @@ export default function RecommendationEdit({ id }: { id: string }) {
                         />
                         <FormField
                             control={form.control}
-                            name="progress_status_id"
+                            name="phone"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Status Proses</FormLabel>
+                                    <FormLabel>No. HP</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="text"
+                                            id="phone"
+                                            placeholder="No. HP"
+                                            defaultValue={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="role_id"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Role</FormLabel>
                                     <FormControl>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={
                                                 field.value?.toString() ?? ''
                                             }
-                                            disabled={
-                                                isLoadingRecommendation ||
-                                                isLoadingStatuses
-                                            }
                                         >
                                             <SelectTrigger className="w-full">
-                                                <SelectValue
-                                                    placeholder={
-                                                        isLoadingRecommendation ||
-                                                        isLoadingStatuses
-                                                            ? 'Loading...'
-                                                            : 'Pilih status'
-                                                    }
-                                                />
+                                                <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
                                                     <SelectLabel>
-                                                        Status Proses
+                                                        Role
                                                     </SelectLabel>
-                                                    {statusesData?.map(
-                                                        (status) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    status.value
-                                                                }
-                                                                value={status.value.toString()}
-                                                            >
-                                                                {status.label}
-                                                            </SelectItem>
-                                                        ),
-                                                    )}
+                                                    {roles.map((role) => (
+                                                        <SelectItem
+                                                            key={role.id}
+                                                            value={role.id.toString()}
+                                                        >
+                                                            {role.name}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
@@ -267,94 +227,24 @@ export default function RecommendationEdit({ id }: { id: string }) {
                             )}
                         />
                     </div>
-
-                    <div>
-                        <h1 className="font-bold mb-2">Dokumen</h1>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
-                            <div>
-                                <FormField
-                                    control={form.control}
-                                    name="file"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Surat Rekomendasi
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    disabled={
-                                                        form.watch(
-                                                            'progress_status_id',
-                                                        ) != 5
-                                                    }
-                                                    type="file"
-                                                    id="file"
-                                                    placeholder="Surat Rekomendasi"
-                                                    onChange={(e) => {
-                                                        field.onChange(e);
-                                                        form.setValue(
-                                                            'file',
-                                                            e.target
-                                                                .files?.[0] ||
-                                                                null,
-                                                        );
-                                                    }}
-                                                />
-                                            </FormControl>
-                                            {form.watch('progress_status_id') !=
-                                                5 && (
-                                                <FormDescription className="text-sm text-gray-500 italic font-light">
-                                                    Surat Rekomendasi bisa di
-                                                    tambahkan jika statusnya
-                                                    sudah disetujui &
-                                                    diterbitkan.
-                                                </FormDescription>
-                                            )}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                {recommendation?.recommendation_letter && (
-                                    <a
-                                        className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2 mt-2"
-                                        href={
-                                            recommendation?.recommendation_letter
-                                        }
-                                        download="surat_rekomendasi.pdf"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <IconDownload className="h-4 w-4" />
-                                        Unduh Surat Rekomendasi
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <Button
-                            className="mt-2 flex items-center"
-                            disabled={isLoading}
-                            type="button"
-                        >
+                    <div className="flex items-center gap-2">
+                        <Button>
                             <Link
-                                to="/recommendations"
+                                to="/users"
                                 className="flex items-center gap-2"
                             >
                                 <IconArrowLeft className="h-4 w-4" />
                                 Kembali
                             </Link>
                         </Button>
-
                         <Button
-                            className="mt-2 flex items-center bg-blue-500 hover:bg-blue-600 text-white"
-                            disabled={isLoading}
                             type="submit"
+                            disabled={isLoading}
                             onClick={() => {
                                 form.handleSubmit(onSubmit);
                             }}
                         >
+                            <IconDeviceFloppy className="h-4 w-4" />
                             Simpan{' '}
                             {isLoading && (
                                 <IconLoader className="animate-spin" />

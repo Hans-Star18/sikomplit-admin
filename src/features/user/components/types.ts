@@ -14,6 +14,13 @@ export interface User {
     };
 }
 
+export interface UserEditForm {
+    name: string;
+    email: string;
+    phone: string;
+    role_id: number;
+}
+
 export interface DataTableToolbarProps<TData> {
     table: Table<TData>;
 }

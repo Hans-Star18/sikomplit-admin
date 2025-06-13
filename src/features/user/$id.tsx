@@ -10,6 +10,15 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { type User } from '@/features/user/components/types';
 import axiosInstance from '@/lib/axios';
 import { formatDate } from '@/lib/utils';
@@ -62,6 +71,17 @@ export default function UserDetail({ id }: { id: string }) {
             form.setValue('role', user.role);
         }
     }, [user]);
+
+    const roles = [
+        {
+            id: 1,
+            name: 'Admin',
+        },
+        {
+            id: 2,
+            name: 'User',
+        },
+    ];
 
     return (
         <Main>
@@ -149,6 +169,44 @@ export default function UserDetail({ id }: { id: string }) {
                                             placeholder="No. HP"
                                             defaultValue={field.value}
                                         />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="role"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Role</FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={
+                                                field.value?.id.toString() ?? ''
+                                            }
+                                            disabled
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>
+                                                        Role
+                                                    </SelectLabel>
+                                                    {roles.map((role) => (
+                                                        <SelectItem
+                                                            key={role.id}
+                                                            value={role.id.toString()}
+                                                        >
+                                                            {role.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
