@@ -5,6 +5,7 @@ import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
 import { Route as RecommendationDetailRoute } from '@/routes/(dashboard)/recommendations/$id';
 import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommendations/$id.edit';
 import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations/index';
+import { Route as ResearchIndexRoute } from '@/routes/(dashboard)/research/index';
 import { Route as UserDetailRoute } from '@/routes/(dashboard)/users/$id';
 import { Route as UserEditRoute } from '@/routes/(dashboard)/users/$id.edit';
 import { Route as UserIndexRoute } from '@/routes/(dashboard)/users/index';
@@ -89,6 +90,15 @@ const userEditRoute = UserEditRoute.update({
     },
 } as any);
 
+const researchIndexRoute = ResearchIndexRoute.update({
+    id: 'research-index',
+    path: '/research',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -100,4 +110,5 @@ export const routeTree = RootRoute.addChildren([
     userIndexRoute,
     userDetailRoute,
     userEditRoute,
+    researchIndexRoute,
 ]);

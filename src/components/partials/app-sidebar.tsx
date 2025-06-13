@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import {
+    IconFile,
     IconFileCheck,
     IconLayoutDashboard,
     IconUsers,
@@ -44,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 const navGroups = [
     {
-        title: 'General',
+        title: 'Menu Utama',
         items: [
             {
                 title: 'Dashboard',
@@ -60,6 +61,11 @@ const navGroups = [
                 title: 'Pengguna',
                 url: '/users' as const,
                 icon: IconUsers,
+            },
+            {
+                title: 'Ringkasan & Flyer',
+                url: '/research' as const,
+                icon: IconFile,
             },
             // {
             //     title: "Secured by Clerk",
