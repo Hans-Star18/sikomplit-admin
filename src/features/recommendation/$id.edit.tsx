@@ -23,7 +23,7 @@ import { type Recommendation } from '@/features/recommendation/components/types'
 import type { RecommendationEditForm } from '@/features/recommendation/components/types';
 import axiosInstance from '@/lib/axios';
 import { IconArrowLeft, IconDownload, IconLoader } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -66,7 +66,7 @@ const statuses = () => {
 
 export default function RecommendationEdit({ id }: { id: string }) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const queryClient = useQueryClient();
     const { data: recommendation, isLoading: isLoadingRecommendation } =
         recommendations(id);
 
@@ -112,6 +112,9 @@ export default function RecommendationEdit({ id }: { id: string }) {
                         },
                     },
                 );
+                await queryClient.invalidateQueries({
+                    queryKey: ['recommendations', id],
+                });
             }
 
             toast.success('Berhasil memperbarui data.');
@@ -138,12 +141,12 @@ export default function RecommendationEdit({ id }: { id: string }) {
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
-                <div className="flex items-center gap-2 justify-between w-full">
+                <div className="flex w-full items-center justify-between gap-2">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight flex-1">
+                        <h2 className="flex-1 text-2xl font-bold tracking-tight">
                             Edit Permohonan Surat Rekomendasi
                         </h2>
-                        <p className="text-gray-400 text-sm italic font-light">
+                        <p className="text-sm font-light text-gray-400 italic">
                             Hanya{' '}
                             <span className="font-semibold text-gray-500">
                                 Status Proses
@@ -175,7 +178,7 @@ export default function RecommendationEdit({ id }: { id: string }) {
                     onSubmit={form.handleSubmit(onSubmit)}
                     encType="multipart/form-data"
                 >
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                    <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                         <FormField
                             control={form.control}
                             name="request_number"
@@ -269,8 +272,8 @@ export default function RecommendationEdit({ id }: { id: string }) {
                     </div>
 
                     <div>
-                        <h1 className="font-bold mb-2">Dokumen</h1>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                        <h1 className="mb-2 font-bold">Dokumen</h1>
+                        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                             <div>
                                 <FormField
                                     control={form.control}
@@ -303,7 +306,7 @@ export default function RecommendationEdit({ id }: { id: string }) {
                                             </FormControl>
                                             {form.watch('progress_status_id') !=
                                                 5 && (
-                                                <FormDescription className="text-sm text-gray-500 italic font-light">
+                                                <FormDescription className="text-sm font-light text-gray-500 italic">
                                                     Surat Rekomendasi bisa di
                                                     tambahkan jika statusnya
                                                     sudah disetujui &
@@ -316,7 +319,7 @@ export default function RecommendationEdit({ id }: { id: string }) {
                                 />
                                 {recommendation?.recommendation_letter && (
                                     <a
-                                        className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2 mt-2"
+                                        className="mt-2 flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
                                         href={
                                             recommendation?.recommendation_letter
                                         }
@@ -348,7 +351,7 @@ export default function RecommendationEdit({ id }: { id: string }) {
                         </Button>
 
                         <Button
-                            className="mt-2 flex items-center bg-blue-500 hover:bg-blue-600 text-white"
+                            className="mt-2 flex items-center bg-blue-500 text-white hover:bg-blue-600"
                             disabled={isLoading}
                             type="submit"
                             onClick={() => {

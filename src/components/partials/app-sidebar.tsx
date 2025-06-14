@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import {
+    IconEye,
     IconFile,
     IconFileCheck,
     IconLayoutDashboard,
@@ -73,24 +74,11 @@ const navGroups = [
                 url: '/feedbacks' as const,
                 icon: IconMessageCircle,
             },
-            // {
-            //     title: "Secured by Clerk",
-            //     icon: IconUsers,
-            //     items: [
-            //         {
-            //             title: "Sign In",
-            //             url: "/" as const,
-            //         },
-            //         {
-            //             title: "Sign Up",
-            //             url: "/" as const,
-            //         },
-            //         {
-            //             title: "User Management",
-            //             url: "/" as const,
-            //         },
-            //     ],
-            // },
+            {
+                title: 'Page View',
+                url: '/page-views' as const,
+                icon: IconEye,
+            },
         ],
     },
 ];

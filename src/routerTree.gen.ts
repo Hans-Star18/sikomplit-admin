@@ -3,6 +3,7 @@ import { Route as LoginIndexRoute } from '@/routes/(auth)/login';
 import { Route as LogoutRoute } from '@/routes/(auth)/logout';
 import { Route as FeedbackIndexRoute } from '@/routes/(dashboard)/feedbacks/index';
 import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
+import { Route as PageViewIndexRoute } from '@/routes/(dashboard)/page-views/index';
 import { Route as RecommendationDetailRoute } from '@/routes/(dashboard)/recommendations/$id';
 import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommendations/$id.edit';
 import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations/index';
@@ -129,6 +130,15 @@ const feedbackIndexRoute = FeedbackIndexRoute.update({
     },
 } as any);
 
+const pageViewIndexRoute = PageViewIndexRoute.update({
+    id: 'page-view-index',
+    path: '/page-views',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -144,4 +154,5 @@ export const routeTree = RootRoute.addChildren([
     researchDetailRoute,
     researchEditRoute,
     feedbackIndexRoute,
+    pageViewIndexRoute,
 ]);
