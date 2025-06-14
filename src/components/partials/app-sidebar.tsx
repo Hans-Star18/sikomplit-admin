@@ -11,6 +11,7 @@ import {
     IconFile,
     IconFileCheck,
     IconLayoutDashboard,
+    IconMessageCircle,
     IconUsers,
 } from '@tabler/icons-react';
 import { Hexagon } from 'lucide-react';
@@ -66,6 +67,11 @@ const navGroups = [
                 title: 'Ringkasan & Flyer',
                 url: '/research' as const,
                 icon: IconFile,
+            },
+            {
+                title: 'Feedback',
+                url: '/feedbacks' as const,
+                icon: IconMessageCircle,
             },
             // {
             //     title: "Secured by Clerk",

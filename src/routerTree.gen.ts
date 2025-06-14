@@ -1,6 +1,7 @@
 import { authMiddleware } from '@/lib/middleware';
 import { Route as LoginIndexRoute } from '@/routes/(auth)/login';
 import { Route as LogoutRoute } from '@/routes/(auth)/logout';
+import { Route as FeedbackIndexRoute } from '@/routes/(dashboard)/feedbacks/index';
 import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
 import { Route as RecommendationDetailRoute } from '@/routes/(dashboard)/recommendations/$id';
 import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommendations/$id.edit';
@@ -119,6 +120,15 @@ const researchEditRoute = ResearchEditRoute.update({
     },
 } as any);
 
+const feedbackIndexRoute = FeedbackIndexRoute.update({
+    id: 'feedback-index',
+    path: '/feedbacks',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -133,4 +143,5 @@ export const routeTree = RootRoute.addChildren([
     researchIndexRoute,
     researchDetailRoute,
     researchEditRoute,
+    feedbackIndexRoute,
 ]);

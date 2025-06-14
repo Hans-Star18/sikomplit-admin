@@ -20,6 +20,7 @@ import {
 import axiosInstance from '@/lib/axios';
 import { router } from '@/main';
 import { IconDots, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { type Row } from '@tanstack/react-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -34,11 +35,13 @@ export function DataTableRowActions<
     TData extends { id: string | number; role: { slug: string }; name: string },
 >({ row }: DataTableRowActionsProps<TData>) {
     const [isLoading, setIsLoading] = useState(false);
+    const queryClient = useQueryClient();
 
     async function onDelete() {
         try {
             setIsLoading(true);
             await axiosInstance.delete(`/admin/users/${row.original.id}`);
+            await queryClient.invalidateQueries({ queryKey: ['user'] });
             toast.success('Berhasil menghapus data.');
         } catch (error: any) {
             toast.error(
@@ -94,7 +97,7 @@ export function DataTableRowActions<
                             <Button
                                 disabled={isLoading}
                                 variant="ghost"
-                                className="flex cursor-default items-center gap-2 rounded-sm px-2 py-1 text-sm outline-hidden select-none w-full font-normal"
+                                className="flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1 text-sm font-normal outline-hidden select-none"
                             >
                                 Hapus
                                 <DropdownMenuShortcut>
