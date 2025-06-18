@@ -204,7 +204,10 @@ export default function Dashboard() {
                                         </div>
                                     ) : (
                                         researchData?.map((research) => (
-                                            <div className="flex items-center gap-4">
+                                            <div
+                                                key={research.slug}
+                                                className="flex items-center gap-4"
+                                            >
                                                 <div className="flex flex-1 flex-wrap items-center justify-between">
                                                     <div className="max-w-[200px] space-y-1 truncate md:max-w-full">
                                                         <p className="text-sm leading-none font-medium">

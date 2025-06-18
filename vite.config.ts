@@ -3,7 +3,8 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { defineConfig } from 'vite';
-import mkcert from 'vite-plugin-mkcert';
+
+// import mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig({
     plugins: [
@@ -15,10 +16,18 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
-        mkcert(),
+        // mkcert(),
     ],
     server: {
         port: 3000,
+        host: true,
+        watch: {
+            usePolling: true,
+        },
+        hmr: {
+            host: 'localhost',
+            port: 3000,
+        },
     },
     resolve: {
         alias: {
