@@ -11,6 +11,7 @@ export interface User {
     role: {
         id: number;
         name: string;
+        slug: string;
     };
 }
 

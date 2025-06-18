@@ -29,31 +29,13 @@ export default function RecommendationDetail({ id }: { id: string }) {
         },
     });
 
-    const { data: statusesResponse } = useQuery({
-        queryKey: ['statuses'],
-        queryFn: () => {
-            return axiosInstance.get<{
-                data: {
-                    name: string;
-                    code: string;
-                }[];
-            }>('/options/progress-statuses');
-        },
-    });
-
-    const statuses =
-        statusesResponse?.data.data.map((status) => ({
-            label: status.name,
-            value: status.code,
-        })) ?? [];
-
     const recommendation = response?.data.data;
 
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
-                <div className="flex items-center gap-2 justify-between w-full">
-                    <h2 className="text-2xl font-bold tracking-tight flex-1">
+                <div className="flex w-full items-center justify-between gap-2">
+                    <h2 className="flex-1 text-2xl font-bold tracking-tight">
                         Detail Permohonan Surat Rekomendasi
                     </h2>
                     <div className="flex items-center gap-2">
@@ -81,7 +63,7 @@ export default function RecommendationDetail({ id }: { id: string }) {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                     <Label htmlFor="request_number">Nomer Permohonan</Label>
                     <Input
                         disabled
@@ -91,7 +73,7 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         value={recommendation?.request_number ?? ''}
                     />
                 </div>
-                <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                     <Label htmlFor="research_type">Jenis Penelitian</Label>
                     <Input
                         disabled
@@ -101,7 +83,7 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         value={recommendation?.research_type ?? ''}
                     />
                 </div>
-                <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                     <Label htmlFor="progress_status">Status Proses</Label>
                     <Input
                         disabled
@@ -118,16 +100,16 @@ export default function RecommendationDetail({ id }: { id: string }) {
             )}
 
             <div>
-                <h1 className="font-bold mb-2">Dokumen</h1>
+                <h1 className="mb-2 font-bold">Dokumen</h1>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     {recommendation?.application_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                        <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                             <Label htmlFor="request_number">
                                 Surat Permohonan
                             </Label>
                             <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
+                                className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
                                 href={recommendation?.application_letter}
                                 download="surat_permohonan.pdf"
                                 target="_blank"
@@ -139,12 +121,12 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         </div>
                     )}
                     {recommendation?.research_proposal && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                        <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                             <Label htmlFor="research_type">
                                 Proposal Penelitian
                             </Label>
                             <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
+                                className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
                                 href={recommendation?.research_proposal}
                                 download="proposal_penelitian.pdf"
                                 target="_blank"
@@ -156,12 +138,12 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         </div>
                     )}
                     {recommendation?.ethics_clearance_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                        <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                             <Label htmlFor="research_type">
                                 Surat Keterangan Etika
                             </Label>
                             <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
+                                className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
                                 href={recommendation?.ethics_clearance_letter}
                                 download="surat_keterangan_etika.pdf"
                                 target="_blank"
@@ -173,12 +155,12 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         </div>
                     )}
                     {recommendation?.final_report_statement_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                        <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                             <Label htmlFor="research_type">
                                 Pernyataan Penyerahan Penelitian
                             </Label>
                             <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
+                                className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
                                 href={
                                     recommendation?.final_report_statement_letter
                                 }
@@ -192,12 +174,12 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         </div>
                     )}
                     {recommendation?.recommendation_letter && (
-                        <div className="grid w-full max-w-sm items-center gap-3 mb-4">
+                        <div className="mb-4 grid w-full max-w-sm items-center gap-3">
                             <Label htmlFor="research_type">
                                 Surat Rekomendasi
                             </Label>
                             <a
-                                className="text-blue-500 hover:text-blue-700 text-sm flex items-center gap-2"
+                                className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
                                 href={recommendation?.recommendation_letter}
                                 download="surat_rekomendasi.pdf"
                                 target="_blank"
