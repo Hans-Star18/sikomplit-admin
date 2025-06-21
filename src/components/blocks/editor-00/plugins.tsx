@@ -8,7 +8,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { IconArrowBack, IconArrowForward } from '@tabler/icons-react';
 import { REDO_COMMAND, UNDO_COMMAND } from 'lexical';
 
-function ToolbarPlugin() {
+function ToolbarPlugin({ disabled }: { disabled?: boolean }) {
     const [editor] = useLexicalComposerContext();
 
     return (
@@ -19,6 +19,7 @@ function ToolbarPlugin() {
                         variant="ghost"
                         size="sm"
                         type="button"
+                        disabled={disabled}
                         onClick={() => {
                             editor.dispatchCommand(UNDO_COMMAND, undefined);
                         }}
@@ -30,6 +31,7 @@ function ToolbarPlugin() {
                         variant="ghost"
                         size="sm"
                         type="button"
+                        disabled={disabled}
                         onClick={() => {
                             editor.dispatchCommand(REDO_COMMAND, undefined);
                         }}
@@ -43,16 +45,19 @@ function ToolbarPlugin() {
     );
 }
 
-export function Plugins() {
+export function Plugins({ disabled }: { disabled?: boolean }) {
     return (
         <div className="relative">
-            <ToolbarPlugin />
+            <ToolbarPlugin disabled={disabled} />
             <div className="relative">
                 <RichTextPlugin
                     contentEditable={
                         <div className="min-h-[200px]">
                             <div className="">
-                                <ContentEditable placeholder="" />
+                                <ContentEditable
+                                    placeholder=""
+                                    disabled={disabled}
+                                />
                             </div>
                         </div>
                     }

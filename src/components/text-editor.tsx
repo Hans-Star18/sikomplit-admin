@@ -44,11 +44,13 @@ export default function TextEditor({
     onChange,
     className,
     returnPlainText = false,
+    disabled = false,
 }: {
     value: string;
     onChange: (value: string) => void;
     className?: string;
     returnPlainText?: boolean;
+    disabled?: boolean;
 }) {
     const [editorState, setEditorState] = useState<SerializedEditorState>(
         () => {
@@ -99,6 +101,7 @@ export default function TextEditor({
             <Editor
                 editorSerializedState={editorState}
                 onSerializedChange={handleSerializedChange}
+                disabled={disabled}
             />
         </div>
     );

@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import type { Research } from '@/features/research/components/types';
-import { IconArrowLeft, IconLoader, IconPencil } from '@tabler/icons-react';
+import { IconArrowLeft, IconLoader } from '@tabler/icons-react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -47,15 +47,6 @@ export default function ResearchCreate() {
                                 className="flex items-center gap-2"
                             >
                                 <IconArrowLeft className="h-4 w-4" />
-                                Kembali
-                            </Link>
-                        </Button>
-                        <Button variant="outline">
-                            <Link
-                                to="/research"
-                                className="flex items-center gap-2"
-                            >
-                                <IconPencil className="h-4 w-4" />
                                 Kembali
                             </Link>
                         </Button>
@@ -145,7 +136,7 @@ export default function ResearchCreate() {
                                     <FormLabel>Abstrak</FormLabel>
                                     <FormControl>
                                         <TextEditor
-                                            value={field.value}
+                                            value={field.value || ''}
                                             onChange={(value) => {
                                                 field.onChange(value);
                                                 form.setValue(

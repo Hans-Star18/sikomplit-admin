@@ -15,7 +15,7 @@ export interface Research {
     slug: string;
     research_summary: string | null | File;
     flyer: string | null | File;
-    abstract: string;
+    abstract: string | null;
     is_published: string;
     created_at: Date;
     updated_at: Date;

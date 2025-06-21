@@ -1,4 +1,5 @@
 import { Main } from '@/components/partials/main';
+import TextEditor from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -217,6 +218,32 @@ export default function ResearchDetail({ slug }: { slug: string }) {
                                     Tidak ada ringkasan penelitian
                                 </div>
                             )}
+                        </div>
+                        <div className="col-span-3 mb-4 items-center gap-3">
+                            <FormField
+                                control={form.control}
+                                name="abstract"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Abstrak</FormLabel>
+                                        <FormControl>
+                                            <TextEditor
+                                                value={field.value || ''}
+                                                onChange={(value) => {
+                                                    field.onChange(value);
+                                                    form.setValue(
+                                                        'abstract',
+                                                        value,
+                                                    );
+                                                }}
+                                                disabled={true}
+                                                returnPlainText={true}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                     </div>
                 </form>

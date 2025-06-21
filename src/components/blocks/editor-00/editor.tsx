@@ -22,11 +22,13 @@ export function Editor({
     editorSerializedState,
     onChange,
     onSerializedChange,
+    disabled,
 }: {
     editorState?: EditorState;
     editorSerializedState?: SerializedEditorState;
     onChange?: (editorState: EditorState) => void;
     onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+    disabled?: boolean;
 }) {
     return (
         <div className="bg-background focus-within:ring-ring overflow-hidden rounded-lg border shadow-sm transition-all focus-within:ring-2 focus-within:ring-offset-2">
@@ -40,13 +42,15 @@ export function Editor({
                 }}
             >
                 <TooltipProvider>
-                    <Plugins />
+                    <Plugins disabled={disabled || false} />
 
                     <OnChangePlugin
                         ignoreSelectionChange={true}
                         onChange={(editorState) => {
-                            onChange?.(editorState);
-                            onSerializedChange?.(editorState.toJSON());
+                            if (!disabled) {
+                                onChange?.(editorState);
+                                onSerializedChange?.(editorState.toJSON());
+                            }
                         }}
                     />
                 </TooltipProvider>
