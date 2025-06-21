@@ -9,6 +9,7 @@ import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommend
 import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations/index';
 import { Route as ResearchDetailRoute } from '@/routes/(dashboard)/research/$slug';
 import { Route as ResearchEditRoute } from '@/routes/(dashboard)/research/$slug.edit';
+import { Route as ResearchCreateRoute } from '@/routes/(dashboard)/research/create';
 import { Route as ResearchIndexRoute } from '@/routes/(dashboard)/research/index';
 import { Route as UserDetailRoute } from '@/routes/(dashboard)/users/$id';
 import { Route as UserEditRoute } from '@/routes/(dashboard)/users/$id.edit';
@@ -112,6 +113,15 @@ const researchDetailRoute = ResearchDetailRoute.update({
     },
 } as any);
 
+const researchCreateRoute = ResearchCreateRoute.update({
+    id: 'research-create',
+    path: '/research/create',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location });
+    },
+} as any);
+
 const researchEditRoute = ResearchEditRoute.update({
     id: 'research-edit',
     path: '/research/$slug/edit',
@@ -155,4 +165,5 @@ export const routeTree = RootRoute.addChildren([
     researchEditRoute,
     feedbackIndexRoute,
     pageViewIndexRoute,
+    researchCreateRoute,
 ]);

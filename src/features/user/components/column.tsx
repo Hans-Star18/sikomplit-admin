@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/features/user/components/data-table-column-header';
 import { DataTableRowActions } from '@/features/user/components/data-table-row-action';
 import { type User } from '@/features/user/components/types';
-import { IconUser, IconUserShield } from '@tabler/icons-react';
+import { IconUser, IconUserShield, IconUserUp } from '@tabler/icons-react';
 import { type ColumnDef } from '@tanstack/react-table';
 
 export const columns: ColumnDef<User>[] = [
@@ -25,11 +25,13 @@ export const columns: ColumnDef<User>[] = [
             const roleColor: Record<string, string> = {
                 User: 'bg-green-500/20',
                 Admin: 'bg-blue-500/20',
+                Staff: 'bg-yellow-500/20',
             };
 
             const roleIcon: Record<string, React.ReactNode> = {
                 User: <IconUser className="h-4 w-4" />,
                 Admin: <IconUserShield className="h-4 w-4" />,
+                Staff: <IconUserUp className="h-4 w-4" />,
             };
 
             return (

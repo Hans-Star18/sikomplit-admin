@@ -168,7 +168,12 @@ export default function ResearchDetail({ slug }: { slug: string }) {
                             ) : research?.flyer ? (
                                 <a
                                     className="flex cursor-pointer items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
-                                    href={research.flyer}
+                                    href={
+                                        typeof research.flyer === 'string' &&
+                                        research.flyer !== null
+                                            ? research.flyer
+                                            : undefined
+                                    }
                                     download={`${research.slug}-flyer.pdf`}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -193,7 +198,13 @@ export default function ResearchDetail({ slug }: { slug: string }) {
                             ) : research?.research_summary ? (
                                 <a
                                     className="flex cursor-pointer items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
-                                    href={research.research_summary}
+                                    href={
+                                        typeof research.research_summary ===
+                                            'string' &&
+                                        research.research_summary !== null
+                                            ? research.research_summary
+                                            : undefined
+                                    }
                                     download={`${research.slug}-research-summary.pdf`}
                                     target="_blank"
                                     rel="noopener noreferrer"

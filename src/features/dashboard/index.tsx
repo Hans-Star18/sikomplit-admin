@@ -241,7 +241,12 @@ export default function Dashboard() {
                                                     <div className="flex items-center gap-1 font-medium">
                                                         <a
                                                             href={
-                                                                research.flyer
+                                                                typeof research.flyer ===
+                                                                    'string' &&
+                                                                research.flyer !==
+                                                                    null
+                                                                    ? research.flyer
+                                                                    : undefined
                                                             }
                                                             download
                                                             target="_blank"
@@ -254,7 +259,12 @@ export default function Dashboard() {
                                                         </a>
                                                         <a
                                                             href={
-                                                                research.research_summary
+                                                                typeof research.research_summary ===
+                                                                    'string' &&
+                                                                research.research_summary !==
+                                                                    null
+                                                                    ? research.research_summary
+                                                                    : undefined
                                                             }
                                                             download
                                                             target="_blank"

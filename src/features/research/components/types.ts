@@ -13,8 +13,9 @@ export interface Research {
     id: number;
     title: string;
     slug: string;
-    research_summary: string;
-    flyer: string;
+    research_summary: string | null | File;
+    flyer: string | null | File;
+    abstract: string;
     is_published: string;
     created_at: Date;
     updated_at: Date;

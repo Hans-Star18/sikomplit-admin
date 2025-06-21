@@ -76,6 +76,10 @@ export default function UserEdit({ id }: { id: string }) {
             id: 2,
             name: 'User',
         },
+        {
+            id: 3,
+            name: 'Staff',
+        },
     ];
 
     async function onSubmit(data: UserEditForm) {
@@ -108,8 +112,8 @@ export default function UserEdit({ id }: { id: string }) {
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
-                <div className="flex items-center gap-2 justify-between w-full">
-                    <h2 className="text-2xl font-bold tracking-tight flex-1">
+                <div className="flex w-full items-center justify-between gap-2">
+                    <h2 className="flex-1 text-2xl font-bold tracking-tight">
                         Edit User
                     </h2>
                     <div className="flex items-center gap-2">
@@ -131,7 +135,7 @@ export default function UserEdit({ id }: { id: string }) {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                    <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                         <FormField
                             control={form.control}
                             name="name"

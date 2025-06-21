@@ -1,0 +1,34 @@
+import { ContentEditable as LexicalContentEditable } from '@lexical/react/LexicalContentEditable';
+import type { JSX } from 'react';
+
+type Props = {
+    placeholder: string;
+    className?: string;
+    placeholderClassName?: string;
+};
+
+export function ContentEditable({
+    placeholder = '',
+    className,
+    placeholderClassName,
+}: Props): JSX.Element {
+    return (
+        <LexicalContentEditable
+            className={
+                className ??
+                `ContentEditable__root relative block min-h-[200px] w-full resize-none overflow-auto border-0 bg-transparent p-2 text-sm leading-relaxed focus:ring-0 focus:outline-none`
+            }
+            aria-placeholder={placeholder}
+            placeholder={
+                <div
+                    className={
+                        placeholderClassName ??
+                        `text-muted-foreground pointer-events-none absolute top-3 left-4 overflow-hidden text-sm leading-relaxed select-none`
+                    }
+                >
+                    {placeholder}
+                </div>
+            }
+        />
+    );
+}

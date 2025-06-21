@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTableFacetedFilter } from '@/features/research/components/data-table-faceted-filter';
 import { type DataTableToolbarProps } from '@/features/research/components/types';
-import { IconRefresh } from '@tabler/icons-react';
+import { router } from '@/main';
+import { IconPlus, IconRefresh } from '@tabler/icons-react';
 
 export function DataTableToolbar<TData>({
     table,
@@ -53,6 +54,19 @@ export function DataTableToolbar<TData>({
                         <IconRefresh className="ml-2 h-4 w-4" />
                     </Button>
                 )}
+            </div>
+            <div>
+                <Button
+                    variant="outline"
+                    onClick={() => {
+                        router.navigate({
+                            to: '/research/create',
+                        });
+                    }}
+                >
+                    <IconPlus className="h-4 w-4" />
+                    Tambah Penelitian
+                </Button>
             </div>
         </div>
     );

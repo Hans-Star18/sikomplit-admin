@@ -20,6 +20,7 @@ import { Route as dashboardRecommendationsIndexImport } from './routes/(dashboar
 import { Route as dashboardPageViewsIndexImport } from './routes/(dashboard)/page-views/index'
 import { Route as dashboardFeedbacksIndexImport } from './routes/(dashboard)/feedbacks/index'
 import { Route as dashboardUsersIdImport } from './routes/(dashboard)/users/$id'
+import { Route as dashboardResearchCreateImport } from './routes/(dashboard)/research/create'
 import { Route as dashboardResearchSlugImport } from './routes/(dashboard)/research/$slug'
 import { Route as dashboardRecommendationsIdImport } from './routes/(dashboard)/recommendations/$id'
 import { Route as dashboardUsersIdEditImport } from './routes/(dashboard)/users/$id.edit'
@@ -80,6 +81,12 @@ const dashboardFeedbacksIndexRoute = dashboardFeedbacksIndexImport.update({
 const dashboardUsersIdRoute = dashboardUsersIdImport.update({
   id: '/(dashboard)/users/$id',
   path: '/users/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const dashboardResearchCreateRoute = dashboardResearchCreateImport.update({
+  id: '/(dashboard)/research/create',
+  path: '/research/create',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -153,6 +160,13 @@ declare module '@tanstack/react-router' {
       path: '/research/$slug'
       fullPath: '/research/$slug'
       preLoaderRoute: typeof dashboardResearchSlugImport
+      parentRoute: typeof rootRoute
+    }
+    '/(dashboard)/research/create': {
+      id: '/(dashboard)/research/create'
+      path: '/research/create'
+      fullPath: '/research/create'
+      preLoaderRoute: typeof dashboardResearchCreateImport
       parentRoute: typeof rootRoute
     }
     '/(dashboard)/users/$id': {
@@ -267,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/': typeof dashboardIndexRoute
   '/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
   '/research/$slug': typeof dashboardResearchSlugRouteWithChildren
+  '/research/create': typeof dashboardResearchCreateRoute
   '/users/$id': typeof dashboardUsersIdRouteWithChildren
   '/feedbacks': typeof dashboardFeedbacksIndexRoute
   '/page-views': typeof dashboardPageViewsIndexRoute
@@ -284,6 +299,7 @@ export interface FileRoutesByTo {
   '/': typeof dashboardIndexRoute
   '/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
   '/research/$slug': typeof dashboardResearchSlugRouteWithChildren
+  '/research/create': typeof dashboardResearchCreateRoute
   '/users/$id': typeof dashboardUsersIdRouteWithChildren
   '/feedbacks': typeof dashboardFeedbacksIndexRoute
   '/page-views': typeof dashboardPageViewsIndexRoute
@@ -302,6 +318,7 @@ export interface FileRoutesById {
   '/(dashboard)/': typeof dashboardIndexRoute
   '/(dashboard)/recommendations/$id': typeof dashboardRecommendationsIdRouteWithChildren
   '/(dashboard)/research/$slug': typeof dashboardResearchSlugRouteWithChildren
+  '/(dashboard)/research/create': typeof dashboardResearchCreateRoute
   '/(dashboard)/users/$id': typeof dashboardUsersIdRouteWithChildren
   '/(dashboard)/feedbacks/': typeof dashboardFeedbacksIndexRoute
   '/(dashboard)/page-views/': typeof dashboardPageViewsIndexRoute
@@ -321,6 +338,7 @@ export interface FileRouteTypes {
     | '/'
     | '/recommendations/$id'
     | '/research/$slug'
+    | '/research/create'
     | '/users/$id'
     | '/feedbacks'
     | '/page-views'
@@ -337,6 +355,7 @@ export interface FileRouteTypes {
     | '/'
     | '/recommendations/$id'
     | '/research/$slug'
+    | '/research/create'
     | '/users/$id'
     | '/feedbacks'
     | '/page-views'
@@ -353,6 +372,7 @@ export interface FileRouteTypes {
     | '/(dashboard)/'
     | '/(dashboard)/recommendations/$id'
     | '/(dashboard)/research/$slug'
+    | '/(dashboard)/research/create'
     | '/(dashboard)/users/$id'
     | '/(dashboard)/feedbacks/'
     | '/(dashboard)/page-views/'
@@ -371,6 +391,7 @@ export interface RootRouteChildren {
   dashboardIndexRoute: typeof dashboardIndexRoute
   dashboardRecommendationsIdRoute: typeof dashboardRecommendationsIdRouteWithChildren
   dashboardResearchSlugRoute: typeof dashboardResearchSlugRouteWithChildren
+  dashboardResearchCreateRoute: typeof dashboardResearchCreateRoute
   dashboardUsersIdRoute: typeof dashboardUsersIdRouteWithChildren
   dashboardFeedbacksIndexRoute: typeof dashboardFeedbacksIndexRoute
   dashboardPageViewsIndexRoute: typeof dashboardPageViewsIndexRoute
@@ -385,6 +406,7 @@ const rootRouteChildren: RootRouteChildren = {
   dashboardIndexRoute: dashboardIndexRoute,
   dashboardRecommendationsIdRoute: dashboardRecommendationsIdRouteWithChildren,
   dashboardResearchSlugRoute: dashboardResearchSlugRouteWithChildren,
+  dashboardResearchCreateRoute: dashboardResearchCreateRoute,
   dashboardUsersIdRoute: dashboardUsersIdRouteWithChildren,
   dashboardFeedbacksIndexRoute: dashboardFeedbacksIndexRoute,
   dashboardPageViewsIndexRoute: dashboardPageViewsIndexRoute,
@@ -408,6 +430,7 @@ export const routeTree = rootRoute
         "/(dashboard)/",
         "/(dashboard)/recommendations/$id",
         "/(dashboard)/research/$slug",
+        "/(dashboard)/research/create",
         "/(dashboard)/users/$id",
         "/(dashboard)/feedbacks/",
         "/(dashboard)/page-views/",
@@ -436,6 +459,9 @@ export const routeTree = rootRoute
       "children": [
         "/(dashboard)/research/$slug/edit"
       ]
+    },
+    "/(dashboard)/research/create": {
+      "filePath": "(dashboard)/research/create.tsx"
     },
     "/(dashboard)/users/$id": {
       "filePath": "(dashboard)/users/$id.tsx",
