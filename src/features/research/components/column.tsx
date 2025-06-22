@@ -39,35 +39,36 @@ export const columns: ColumnDef<Research>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Flyer" />
         ),
-        cell: ({ row }) => (
-            <div className="w-[100px] flex items-center justify-start gap-2">
-                <Dialog>
-                    <DialogTrigger>
-                        <IconPhoto size={20} className="text-blue-500" />
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Flyer</DialogTitle>
-                            <DialogDescription className="flex items-center justify-center">
-                                <img
-                                    src={row.getValue('flyer')}
-                                    alt="Flyer"
-                                    className="w-full h-auto max-h-[500px] object-contain"
-                                />
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-                <a
-                    href={row.getValue('flyer')}
-                    download
-                    target="_blank"
-                    className="cursor-pointer"
-                >
-                    <IconDownload size={20} className="text-blue-500" />
-                </a>
-            </div>
-        ),
+        cell: ({ row }) =>
+            row.getValue('flyer') && (
+                <div className="flex w-[100px] items-center justify-start gap-2">
+                    <Dialog>
+                        <DialogTrigger>
+                            <IconPhoto size={20} className="text-blue-500" />
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Flyer</DialogTitle>
+                                <DialogDescription className="flex items-center justify-center">
+                                    <img
+                                        src={row.getValue('flyer')}
+                                        alt="Flyer"
+                                        className="h-auto max-h-[500px] w-full object-contain"
+                                    />
+                                </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                    <a
+                        href={row.getValue('flyer')}
+                        download
+                        target="_blank"
+                        className="cursor-pointer"
+                    >
+                        <IconDownload size={20} className="text-blue-500" />
+                    </a>
+                </div>
+            ),
         enableSorting: false,
         enableHiding: false,
     },
@@ -77,7 +78,7 @@ export const columns: ColumnDef<Research>[] = [
             <DataTableColumnHeader column={column} title="Ringkasan" />
         ),
         cell: ({ row }) => (
-            <div className="w-[100px] flex items-center justify-start gap-2">
+            <div className="flex w-[100px] items-center justify-start gap-2">
                 <a
                     href={row.getValue('research_summary')}
                     target="_blank"

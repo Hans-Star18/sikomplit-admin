@@ -10,27 +10,56 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import type { Research } from '@/features/research/components/types';
+import type { ResearchCreate } from '@/features/research/components/types';
+import axiosInstance from '@/lib/axios';
+import { router } from '@/main';
 import { IconArrowLeft, IconLoader } from '@tabler/icons-react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 export default function ResearchCreate() {
     const [isLoading, setIsLoading] = useState(false);
-    const form = useForm<Research>({
+    const form = useForm<ResearchCreate>({
         defaultValues: {
             title: '',
-            research_summary: '',
-            flyer: '',
+            research_summary: null,
+            flyer: null,
             abstract: '',
         },
     });
 
-    async function onSubmit(data: Research) {
+    async function onSubmit(data: ResearchCreate) {
         setIsLoading(true);
-        console.log(data);
-        setIsLoading(false);
+
+        try {
+            await axiosInstance.post(`/admin/research-uploads`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            toast.success('Berhasil menambahkan penelitian.');
+            router.navigate({ to: '/research' });
+        } catch (error: any) {
+            if (error.response?.status === 422) {
+                const errors = error.response?.data?.errors;
+                for (const key in errors) {
+                    form.setError(key as keyof ResearchCreate, {
+                        type: 'server',
+                        message: errors[key][0],
+                    });
+                }
+            } else {
+                toast.error(
+                    error.response?.data?.message ||
+                        'Terjadi kesalahan saat menambahkan data.',
+                );
+            }
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -72,6 +101,13 @@ export default function ResearchCreate() {
                                             id="title"
                                             placeholder="Judul"
                                             defaultValue={field.value}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                form.setValue(
+                                                    'title',
+                                                    e.target.value,
+                                                );
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage />

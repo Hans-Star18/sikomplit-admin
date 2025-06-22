@@ -13,10 +13,17 @@ export interface Research {
     id: number;
     title: string;
     slug: string;
-    research_summary: string | null | File;
-    flyer: string | null | File;
+    research_summary: string | null;
+    flyer: string | null;
     abstract: string | null;
     is_published: string;
     created_at: Date;
     updated_at: Date;
+}
+
+export interface ResearchCreate {
+    title: string;
+    research_summary: File | null;
+    flyer: File | null;
+    abstract: string;
 }
