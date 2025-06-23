@@ -7,9 +7,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { BarChartComponent } from '@/features/dashboard/components/bar-chart';
 import { PieChartComponent } from '@/features/dashboard/components/pie-chart';
 import type {
+    LastEducationDistribution,
     PageViewBrowser,
+    RecommendationAverage,
+    RecommendationTimeRange,
     Statistics,
 } from '@/features/dashboard/components/types';
 import type { Research } from '@/features/research/components/types';
@@ -72,11 +76,63 @@ const getResearch = () => {
     };
 };
 
+const getRecommendationTimeRange = () => {
+    const { data } = useQuery({
+        queryKey: ['recommendation-time-range'],
+        queryFn: () => {
+            return axiosInstance.get<{
+                data: RecommendationTimeRange[];
+            }>('/admin/request/statistics?by=time_to_approve');
+        },
+    });
+
+    return {
+        data: data?.data.data,
+    };
+};
+
+const getRecommendationAverageByAge = () => {
+    const { data } = useQuery({
+        queryKey: ['recommendation-average-by-age'],
+        queryFn: () => {
+            return axiosInstance.get<{ data: RecommendationAverage }>(
+                '/admin/request/statistics/average?by=age',
+            );
+        },
+    });
+
+    return {
+        data: data?.data.data,
+    };
+};
+
+const getLastEducationDistribution = () => {
+    const { data } = useQuery({
+        queryKey: ['last-education-distribution'],
+        queryFn: () => {
+            return axiosInstance.get<{
+                data: { distribution: LastEducationDistribution[] };
+            }>('/admin/request/statistics/average?by=last_education');
+        },
+    });
+
+    return {
+        data: data?.data.data,
+    };
+};
+
 export default function Dashboard() {
     const { data: statistics, isLoading } = getStatistics();
     const { data: pageViews, isLoading: isLoadingPageViews } = getPageViews();
     const { data: research } = getResearch();
     const researchData = [...(research || [])].reverse().slice(0, 5);
+    const { data: recommendationTimeRange } = getRecommendationTimeRange();
+    const { data: recommendationAverageByAge } =
+        getRecommendationAverageByAge();
+    const { data: lastEducationDistributionRaw } =
+        getLastEducationDistribution();
+    const lastEducationDistribution =
+        lastEducationDistributionRaw?.distribution ?? [];
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -179,7 +235,7 @@ export default function Dashboard() {
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
                         {pageViews && (
                             <PieChartComponent
                                 pageViews={pageViews}
@@ -292,6 +348,71 @@ export default function Dashboard() {
                                             </div>
                                         ))
                                     )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        {recommendationTimeRange && (
+                            <BarChartComponent
+                                recommendationTimeRange={
+                                    recommendationTimeRange
+                                }
+                            />
+                        )}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>
+                                    Distribusi Pendidikan Pemohon
+                                </CardTitle>
+                                <CardDescription>
+                                    Distribusi pendidikan pemohon rekomendasi.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {lastEducationDistribution.length === 0 ? (
+                                        <div className="flex items-center justify-center">
+                                            <p className="text-muted-foreground text-sm">
+                                                Tidak ada data
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        lastEducationDistribution.map(
+                                            (
+                                                education: LastEducationDistribution,
+                                                index: number,
+                                            ) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center gap-2"
+                                                >
+                                                    <div className="border-border flex flex-1 flex-wrap items-center justify-between border-b pb-2">
+                                                        <p className="text-sm leading-none font-medium">
+                                                            {education.label}
+                                                        </p>
+                                                        <p className="text-muted-foreground text-base">
+                                                            {education.count}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ),
+                                        )
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Rata - rata usia yang mengajukan
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">
+                                    {recommendationAverageByAge?.average} Tahun
                                 </div>
                             </CardContent>
                         </Card>

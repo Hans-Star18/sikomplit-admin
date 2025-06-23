@@ -30,3 +30,17 @@ export interface PageViewBrowser {
     ie: number;
     others: number;
 }
+
+export interface RecommendationTimeRange {
+    label: number;
+    count: number;
+}
+
+export interface RecommendationAverage {
+    average: number;
+}
+
+export interface LastEducationDistribution {
+    label: string;
+    count: number;
+}

@@ -15,10 +15,9 @@ import {
     IconMessageCircle,
     IconUsers,
 } from '@tabler/icons-react';
-import { Hexagon } from 'lucide-react';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { state } = useSidebar();
+    const { state, isMobile } = useSidebar();
 
     return (
         <Sidebar collapsible="icon" variant="floating" {...props}>
@@ -28,12 +27,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     state === 'collapsed' && 'p-3',
                 )}
             >
-                <Hexagon
-                    className={cn(
-                        'size-8 transition-all duration-200 ease-in-out',
-                        state === 'collapsed' && 'size-6',
-                    )}
-                />
+                {state === 'collapsed' && !isMobile ? (
+                    <img src="/logo.svg" alt="logo" className="size-8" />
+                ) : (
+                    <img src="/logo-web.png" alt="logo" className="h-10 w-40" />
+                )}
             </SidebarHeader>
             <SidebarContent>
                 {navGroups.map((props) => (
