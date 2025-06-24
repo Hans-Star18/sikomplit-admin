@@ -11,7 +11,7 @@ import { Link } from '@tanstack/react-router';
 import { BiodataSection } from './components/biodata-section';
 
 export default function RecommendationDetail({ id }: { id: string }) {
-    const { data: response } = useQuery({
+    const { data: response, isLoading } = useQuery({
         queryKey: ['recommendations', id],
         queryFn: () => {
             return axiosInstance.get<{ data: Recommendation }>(
@@ -21,6 +21,10 @@ export default function RecommendationDetail({ id }: { id: string }) {
     });
 
     const recommendation = response?.data.data;
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>

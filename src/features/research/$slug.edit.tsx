@@ -36,8 +36,8 @@ const getResearch = (slug: string) => {
 };
 
 export default function ResearchEdit({ slug }: { slug: string }) {
-    const { data: research } = getResearch(slug);
-    const [isLoading, setIsLoading] = useState(false);
+    const { data: research, isLoading } = getResearch(slug);
+    const [isLoadingForm, setIsLoadingForm] = useState(false);
 
     const form = useForm<Research>({
         defaultValues: {
@@ -59,7 +59,7 @@ export default function ResearchEdit({ slug }: { slug: string }) {
     }, [research]);
 
     async function onSubmit(data: Research) {
-        setIsLoading(true);
+        setIsLoadingForm(true);
 
         try {
             await axiosInstance.patch(`/admin/research-uploads/${slug}`, {
@@ -77,8 +77,12 @@ export default function ResearchEdit({ slug }: { slug: string }) {
                 );
             }
         } finally {
-            setIsLoading(false);
+            setIsLoadingForm(false);
         }
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>;
     }
 
     return (
@@ -176,7 +180,7 @@ export default function ResearchEdit({ slug }: { slug: string }) {
                     <div className="flex gap-4">
                         <Button
                             className="mt-2 flex items-center"
-                            disabled={isLoading}
+                            disabled={isLoadingForm}
                             type="button"
                         >
                             <Link
@@ -190,7 +194,7 @@ export default function ResearchEdit({ slug }: { slug: string }) {
 
                         <Button
                             className="mt-2 flex items-center bg-blue-500 text-white hover:bg-blue-600"
-                            disabled={isLoading}
+                            disabled={isLoadingForm}
                             type="submit"
                             onClick={() => {
                                 form.handleSubmit(onSubmit);

@@ -62,6 +62,10 @@ export default function ResearchDetail({ slug }: { slug: string }) {
         }
     }, [research]);
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">

@@ -6,7 +6,7 @@ import axiosInstance from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 
 export default function RecommendationIndex() {
-    const { data: response } = useQuery({
+    const { data: response, isLoading } = useQuery({
         queryKey: ['recommendations'],
         queryFn: () => {
             return axiosInstance.get<{ data: Recommendation[] }>(
@@ -32,6 +32,10 @@ export default function RecommendationIndex() {
             label: status.name,
             value: status.name,
         })) ?? [];
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>

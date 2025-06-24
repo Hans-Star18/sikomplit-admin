@@ -43,7 +43,7 @@ const getUser = (id: string) => {
 };
 
 export default function UserDetail({ id }: { id: string }) {
-    const { data: user } = getUser(id);
+    const { data: user, isLoading } = getUser(id);
 
     const form = useForm<User>({
         defaultValues: {
@@ -86,6 +86,10 @@ export default function UserDetail({ id }: { id: string }) {
             name: 'Staff',
         },
     ];
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>

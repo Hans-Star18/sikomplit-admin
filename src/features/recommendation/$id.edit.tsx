@@ -138,6 +138,10 @@ export default function RecommendationEdit({ id }: { id: string }) {
         }
     }
 
+    if (isLoadingRecommendation || isLoadingStatuses) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Main>
             <div className="mb-6 flex flex-wrap items-center justify-between space-y-2 gap-x-4">

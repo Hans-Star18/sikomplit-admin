@@ -24,7 +24,7 @@ interface PageViewBrowser {
 }
 
 const getPageViews = () => {
-    const { data } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['page-views'],
         queryFn: () => {
             return axiosInstance.get<{ data: PageViewBrowser }>(
@@ -35,11 +35,12 @@ const getPageViews = () => {
 
     return {
         data: data?.data.data,
+        isLoading: isLoading,
     };
 };
 
 export default function PageViewIndex() {
-    const { data: pageViews } = getPageViews();
+    const { data: pageViews, isLoading } = getPageViews();
     const [totalPageViews, setTotalPageViews] = useState(0);
 
     const browserIcons = {
@@ -57,6 +58,10 @@ export default function PageViewIndex() {
             Object.values(pageViews ?? {}).reduce((acc, curr) => acc + curr, 0),
         );
     }, [pageViews]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>

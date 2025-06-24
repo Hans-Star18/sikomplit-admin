@@ -20,7 +20,11 @@ const getFeedback = () => {
 };
 
 export default function FeedbackIndex() {
-    const { data: feedback } = getFeedback();
+    const { data: feedback, isLoading } = getFeedback();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>

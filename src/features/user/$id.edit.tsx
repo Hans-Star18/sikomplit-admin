@@ -46,8 +46,8 @@ const getUser = (id: string) => {
 };
 
 export default function UserEdit({ id }: { id: string }) {
-    const { data: user } = getUser(id);
-    const [isLoading, setIsLoading] = useState(false);
+    const { data: user, isLoading } = getUser(id);
+    const [isLoadingForm, setIsLoadingForm] = useState(false);
 
     const form = useForm<UserEditForm>({
         defaultValues: {
@@ -83,7 +83,7 @@ export default function UserEdit({ id }: { id: string }) {
     ];
 
     async function onSubmit(data: UserEditForm) {
-        setIsLoading(true);
+        setIsLoadingForm(true);
 
         try {
             await axiosInstance.put(`/admin/users/${id}`, data);
@@ -105,8 +105,12 @@ export default function UserEdit({ id }: { id: string }) {
                 );
             }
         } finally {
-            setIsLoading(false);
+            setIsLoadingForm(false);
         }
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>;
     }
 
     return (
@@ -243,14 +247,14 @@ export default function UserEdit({ id }: { id: string }) {
                         </Button>
                         <Button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isLoadingForm}
                             onClick={() => {
                                 form.handleSubmit(onSubmit);
                             }}
                         >
                             <IconDeviceFloppy className="h-4 w-4" />
                             Simpan{' '}
-                            {isLoading && (
+                            {isLoadingForm && (
                                 <IconLoader className="animate-spin" />
                             )}
                         </Button>

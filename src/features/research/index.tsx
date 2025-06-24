@@ -22,7 +22,11 @@ const getResearch = () => {
 };
 
 export default function ResearchIndex() {
-    const { data: research } = getResearch();
+    const { data: research, isLoading } = getResearch();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>

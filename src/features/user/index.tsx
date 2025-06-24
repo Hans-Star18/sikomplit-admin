@@ -6,7 +6,7 @@ import axiosInstance from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 
 const getUsers = () => {
-    const { data } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['users'],
         queryFn: () => {
             return axiosInstance.get<{ data: User[] }>('/admin/users');
@@ -15,11 +15,16 @@ const getUsers = () => {
 
     return {
         data: data?.data.data,
+        isLoading,
     };
 };
 
 export default function UserIndex() {
-    const { data: users } = getUsers();
+    const { data: users, isLoading } = getUsers();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Main>
