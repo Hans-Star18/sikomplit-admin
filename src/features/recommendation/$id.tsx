@@ -88,6 +88,27 @@ export default function RecommendationDetail({ id }: { id: string }) {
                         value={recommendation?.progress_status ?? ''}
                     />
                 </div>
+                <div className="mb-4 grid w-full max-w-sm items-center gap-3">
+                    <Label htmlFor="time_to_approve">
+                        Waktu Rekomendasi Disetujui
+                    </Label>
+
+                    <span className="text-sm text-gray-500">
+                        {recommendation?.time_to_approve == 0
+                            ? '< 1'
+                            : (recommendation?.time_to_approve ?? '-')}{' '}
+                        Hari
+                    </span>
+                </div>
+                <div className="mb-4 grid w-full max-w-sm items-center gap-3">
+                    <Label htmlFor="time_to_complete">
+                        Waktu Penelitian Selesai
+                    </Label>
+
+                    <span className="text-sm text-gray-500">
+                        {recommendation?.time_to_complete ?? '-'} Hari
+                    </span>
+                </div>
             </div>
 
             {recommendation && (

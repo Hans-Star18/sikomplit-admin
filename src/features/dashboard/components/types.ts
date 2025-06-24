@@ -44,3 +44,9 @@ export interface LastEducationDistribution {
     label: string;
     count: number;
 }
+
+export interface RecommendationCount {
+    to_be_complete: number;
+    revision: number;
+    approved: number;
+}

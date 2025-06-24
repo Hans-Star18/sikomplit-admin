@@ -5,8 +5,8 @@ import { type Recommendation } from '@/features/recommendation/components/types'
 import axiosInstance from '@/lib/axios';
 import { useQuery } from '@tanstack/react-query';
 
-export default function RecommendationIndex() {
-    const { data: response, isLoading } = useQuery({
+const getRecommendations = () => {
+    const { data, isLoading } = useQuery({
         queryKey: ['recommendations'],
         queryFn: () => {
             return axiosInstance.get<{ data: Recommendation[] }>(
@@ -15,7 +15,14 @@ export default function RecommendationIndex() {
         },
     });
 
-    const { data: statusesResponse } = useQuery({
+    return {
+        data: data?.data.data,
+        isLoading,
+    };
+};
+
+const getResearchStatuses = () => {
+    const { data, isLoading } = useQuery({
         queryKey: ['statuses'],
         queryFn: () => {
             return axiosInstance.get<{
@@ -26,14 +33,44 @@ export default function RecommendationIndex() {
         },
     });
 
-    const recommendations = response?.data.data ?? [];
-    const statuses =
-        statusesResponse?.data.data.map((status) => ({
+    return {
+        data: data?.data.data.map((status) => ({
             label: status.name,
             value: status.name,
-        })) ?? [];
+        })),
+        isLoading,
+    };
+};
 
-    if (isLoading) {
+const getResearchTypes = () => {
+    const { data, isLoading } = useQuery({
+        queryKey: ['research-types'],
+        queryFn: () => {
+            return axiosInstance.get<{
+                data: {
+                    name: string;
+                }[];
+            }>('/options/research-types');
+        },
+    });
+
+    return {
+        data: data?.data.data.map((researchType) => ({
+            label: researchType.name,
+            value: researchType.name,
+        })),
+        isLoading,
+    };
+};
+
+export default function RecommendationIndex() {
+    const { data: recommendations, isLoading } = getRecommendations();
+    const { data: statuses, isLoading: isLoadingStatuses } =
+        getResearchStatuses();
+    const { data: researchTypes, isLoading: isLoadingResearchTypes } =
+        getResearchTypes();
+
+    if (isLoading || isLoadingStatuses || isLoadingResearchTypes) {
         return <div>Loading...</div>;
     }
 
@@ -48,9 +85,10 @@ export default function RecommendationIndex() {
             </div>
             <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
                 <DataTable
-                    data={recommendations}
+                    data={recommendations ?? []}
                     columns={columns}
-                    statuses={statuses}
+                    statuses={statuses ?? []}
+                    researchTypes={researchTypes ?? []}
                 />
             </div>
         </Main>

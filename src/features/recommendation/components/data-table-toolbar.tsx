@@ -7,6 +7,7 @@ import { IconRefresh } from '@tabler/icons-react';
 export function DataTableToolbar<TData>({
     statuses,
     table,
+    researchTypes,
 }: DataTableToolbarProps<TData>) {
     const isFiltered =
         table.getState().columnFilters.length > 0 ||
@@ -29,6 +30,33 @@ export function DataTableToolbar<TData>({
                             column={table.getColumn('progress_status')}
                             title="Status Proses"
                             options={statuses}
+                        />
+                    )}
+                </div>
+                <div className="flex gap-x-2">
+                    {table.getColumn('gender') && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn('gender')}
+                            title="Gender"
+                            options={[
+                                {
+                                    label: 'Pria',
+                                    value: 'Pria',
+                                },
+                                {
+                                    label: 'Wanita',
+                                    value: 'Wanita',
+                                },
+                            ]}
+                        />
+                    )}
+                </div>
+                <div className="flex gap-x-2">
+                    {table.getColumn('research_type') && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn('research_type')}
+                            title="Tipe Penelitian"
+                            options={researchTypes}
                         />
                     )}
                 </div>

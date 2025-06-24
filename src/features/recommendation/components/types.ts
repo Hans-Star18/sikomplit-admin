@@ -21,11 +21,18 @@ export interface Recommendation {
     occupation: string;
     created_at: string;
     updated_at: string;
+    time_to_approve: number | null;
+    time_to_complete: number | null;
 }
 
 export interface DataTableToolbarProps<TData> {
     table: Table<TData>;
     statuses: {
+        label: string;
+        value: string;
+        icon?: React.ComponentType<{ className?: string }>;
+    }[];
+    researchTypes: {
         label: string;
         value: string;
         icon?: React.ComponentType<{ className?: string }>;
@@ -36,6 +43,11 @@ export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     statuses: {
+        label: string;
+        value: string;
+        icon?: React.ComponentType<{ className?: string }>;
+    }[];
+    researchTypes: {
         label: string;
         value: string;
         icon?: React.ComponentType<{ className?: string }>;

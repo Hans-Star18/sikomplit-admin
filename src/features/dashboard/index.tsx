@@ -8,26 +8,20 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { BarChartComponent } from '@/features/dashboard/components/bar-chart';
+import CardOverview from '@/features/dashboard/components/card-overview';
 import { PieChartComponent } from '@/features/dashboard/components/pie-chart';
 import type {
     LastEducationDistribution,
     PageViewBrowser,
     RecommendationAverage,
+    RecommendationCount,
     RecommendationTimeRange,
     Statistics,
 } from '@/features/dashboard/components/types';
 import type { Research } from '@/features/research/components/types';
 import axiosInstance from '@/lib/axios';
 import { formatDate } from '@/lib/utils';
-import {
-    IconEye,
-    IconFile,
-    IconFileCheck,
-    IconFileText,
-    IconLink,
-    IconPhoto,
-    IconUsers,
-} from '@tabler/icons-react';
+import { IconFileText, IconLink, IconPhoto } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 
@@ -121,6 +115,21 @@ const getLastEducationDistribution = () => {
     };
 };
 
+const getRecommendationCount = () => {
+    const { data } = useQuery({
+        queryKey: ['recommendation-count'],
+        queryFn: () => {
+            return axiosInstance.get<{
+                data: RecommendationCount;
+            }>('/admin/request/statistics/counts');
+        },
+    });
+
+    return {
+        data: data?.data.data,
+    };
+};
+
 export default function Dashboard() {
     const { data: statistics, isLoading } = getStatistics();
     const { data: pageViews, isLoading: isLoadingPageViews } = getPageViews();
@@ -133,8 +142,9 @@ export default function Dashboard() {
         getLastEducationDistribution();
     const lastEducationDistribution =
         lastEducationDistributionRaw?.distribution ?? [];
+    const { data: recommendationCount } = getRecommendationCount();
 
-    if (isLoading) {
+    if (isLoading || isLoadingPageViews) {
         return <div>Loading...</div>;
     }
 
@@ -149,92 +159,11 @@ export default function Dashboard() {
             </div>
             <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
                 <div>
-                    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    Total Pengguna
-                                </CardTitle>
-                                <IconUsers className="text-muted-foreground size-5 font-light" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {statistics?.users.total} Pengguna
-                                </div>
-                                <p className="text-muted-foreground text-xs">
-                                    + {statistics?.users.last_30_days}{' '}
-                                    {statistics?.users.label_id}
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    Pengajuan Rekomendasi
-                                </CardTitle>
-                                <IconFile className="text-muted-foreground size-5 font-light" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {statistics?.recommendationRequests.total}{' '}
-                                    Pengajuan
-                                </div>
-                                <p className="text-muted-foreground text-xs">
-                                    +{' '}
-                                    {
-                                        statistics?.recommendationRequests
-                                            .last_7_days
-                                    }{' '}
-                                    {
-                                        statistics?.recommendationRequests
-                                            .label_id
-                                    }
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    Total Rekomendasi
-                                </CardTitle>
-                                <IconFileCheck className="text-muted-foreground size-5 font-light" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {statistics?.recommendationWithLetter.total}{' '}
-                                    Rekomendasi
-                                </div>
-                                <p className="text-muted-foreground text-xs">
-                                    +{' '}
-                                    {
-                                        statistics?.recommendationWithLetter
-                                            .last_7_days
-                                    }{' '}
-                                    {
-                                        statistics?.recommendationWithLetter
-                                            .label_id
-                                    }
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    Total Kunjungan
-                                </CardTitle>
-                                <IconEye className="text-muted-foreground size-5 font-light" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {statistics?.pageView.total} Kunjungan
-                                </div>
-                                <p className="text-muted-foreground text-xs">
-                                    + {statistics?.pageView.last_1_day}{' '}
-                                    {statistics?.pageView.label_id}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    <CardOverview
+                        statistics={statistics}
+                        recommendationCount={recommendationCount}
+                        recommendationAverageByAge={recommendationAverageByAge}
+                    />
                     <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
                         {pageViews && (
                             <PieChartComponent
@@ -399,20 +328,6 @@ export default function Dashboard() {
                                             ),
                                         )
                                     )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    Rata - rata usia yang mengajukan
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {recommendationAverageByAge?.average} Tahun
                                 </div>
                             </CardContent>
                         </Card>

@@ -66,6 +66,18 @@ export const columns: ColumnDef<Recommendation>[] = [
         },
     },
     {
+        accessorKey: 'gender',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Gender" />
+        ),
+        cell: ({ row }) => (
+            <div className="w-[80px] capitalize">{row.getValue('gender')}</div>
+        ),
+        filterFn: (row, id, filterValue) => {
+            return filterValue.includes(row.getValue(id));
+        },
+    },
+    {
         accessorKey: 'name',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Nama" />
