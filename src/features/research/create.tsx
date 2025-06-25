@@ -1,5 +1,5 @@
 import { Main } from '@/components/partials/main';
-import TextEditor from '@/components/text-editor';
+// import TextEditor from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -26,7 +26,7 @@ export default function ResearchCreate() {
             title: '',
             research_summary: null,
             flyer: null,
-            abstract: '',
+            // abstract: '',
         },
     });
 
@@ -163,7 +163,7 @@ export default function ResearchCreate() {
                             )}
                         />
                     </div>
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                         <FormField
                             control={form.control}
                             name="abstract"
@@ -187,7 +187,7 @@ export default function ResearchCreate() {
                                 </FormItem>
                             )}
                         />
-                    </div>
+                    </div> */}
 
                     <div className="flex gap-4">
                         <Button
