@@ -47,7 +47,8 @@ export const columns: ColumnDef<Recommendation>[] = [
                 'Verifikasi Administrasi': 'bg-blue-500/20',
                 'Revisi Dokumen': 'bg-yellow-500/20',
                 'Proses Disposisi': 'bg-blue-500/20',
-                'Disetujui & Diterbitkan': 'bg-green-500/20',
+                Disetujui: 'bg-blue-500/20',
+                Diterbitkan: 'bg-green-500/20',
                 'Hasil Penelitian Diupload': 'bg-blue-500/20',
                 Selesai: 'bg-green-500/20',
             };
