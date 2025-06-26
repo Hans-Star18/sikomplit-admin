@@ -1,5 +1,5 @@
 import { Main } from '@/components/partials/main';
-// import TextEditor from '@/components/text-editor';
+import TextEditor from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -46,7 +46,7 @@ export default function ResearchDetail({ slug }: { slug: string }) {
             slug: research?.slug,
             research_summary: research?.research_summary,
             flyer: research?.flyer,
-            // abstract: research?.abstract,
+            abstract: research?.abstract,
             is_published: research?.is_published,
             created_at: research?.created_at,
             updated_at: research?.updated_at,
@@ -225,7 +225,7 @@ export default function ResearchDetail({ slug }: { slug: string }) {
                                 </div>
                             )}
                         </div>
-                        {/* <div className="col-span-3 mb-4 items-center gap-3">
+                        <div className="col-span-3 mb-4 items-center gap-3">
                             <FormField
                                 control={form.control}
                                 name="abstract"
@@ -252,7 +252,7 @@ export default function ResearchDetail({ slug }: { slug: string }) {
                                     )
                                 }
                             />
-                        </div> */}
+                        </div>
                     </div>
                 </form>
             </Form>
