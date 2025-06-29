@@ -22,7 +22,12 @@ import {
 import { type Recommendation } from '@/features/recommendation/components/types';
 import type { RecommendationEditForm } from '@/features/recommendation/components/types';
 import axiosInstance from '@/lib/axios';
-import { IconArrowLeft, IconDownload, IconLoader } from '@tabler/icons-react';
+import {
+    IconArrowLeft,
+    IconDeviceFloppy,
+    IconDownload,
+    IconLoader,
+} from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
@@ -352,7 +357,7 @@ export default function RecommendationEdit({ id }: { id: string }) {
 
                     <div className="flex gap-4">
                         <Button
-                            className="mt-2 flex items-center"
+                            className="flex items-center"
                             disabled={isLoading}
                             type="button"
                         >
@@ -366,13 +371,14 @@ export default function RecommendationEdit({ id }: { id: string }) {
                         </Button>
 
                         <Button
-                            className="mt-2 flex items-center bg-blue-500 text-white hover:bg-blue-600"
+                            className="flex items-center"
                             disabled={isLoading}
                             type="submit"
                             onClick={() => {
                                 form.handleSubmit(onSubmit);
                             }}
                         >
+                            <IconDeviceFloppy className="h-4 w-4" />
                             Simpan{' '}
                             {isLoading && (
                                 <IconLoader className="animate-spin" />
