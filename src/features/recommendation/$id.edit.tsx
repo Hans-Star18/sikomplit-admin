@@ -100,7 +100,10 @@ export default function RecommendationEdit({ id }: { id: string }) {
                 progress_status_id: data.progress_status_id,
             });
 
-            if (data.file && data.progress_status_id == 5) {
+            if (
+                data.file &&
+                (data.progress_status_id == 5 || data.progress_status_id == 6)
+            ) {
                 await axiosInstance.post(
                     `/admin/recommendations/${id}/upload`,
                     {
@@ -112,12 +115,13 @@ export default function RecommendationEdit({ id }: { id: string }) {
                         },
                     },
                 );
+                toast.success('Berhasil memperbarui data.');
                 await queryClient.invalidateQueries({
                     queryKey: ['recommendations', id],
                 });
+            } else {
+                toast.success('Gagal memperbarui data.');
             }
-
-            toast.success('Berhasil memperbarui data.');
         } catch (error: any) {
             if (error.response?.status === 422) {
                 const errors = error.response?.data?.errors;
@@ -292,7 +296,10 @@ export default function RecommendationEdit({ id }: { id: string }) {
                                                     disabled={
                                                         form.watch(
                                                             'progress_status_id',
-                                                        ) != 5
+                                                        ) != 5 &&
+                                                        form.watch(
+                                                            'progress_status_id',
+                                                        ) != 6
                                                     }
                                                     type="file"
                                                     id="file"
@@ -309,14 +316,18 @@ export default function RecommendationEdit({ id }: { id: string }) {
                                                 />
                                             </FormControl>
                                             {form.watch('progress_status_id') !=
-                                                5 && (
-                                                <FormDescription className="text-sm font-light text-gray-500 italic">
-                                                    Surat Rekomendasi bisa di
-                                                    tambahkan jika statusnya
-                                                    sudah disetujui &
-                                                    diterbitkan.
-                                                </FormDescription>
-                                            )}
+                                                5 &&
+                                                form.watch(
+                                                    'progress_status_id',
+                                                ) != 6 && (
+                                                    <FormDescription className="text-sm font-light text-gray-500 italic">
+                                                        Surat Rekomendasi bisa
+                                                        di tambahkan jika
+                                                        statusnya sudah
+                                                        disetujui atau
+                                                        diterbitkan.
+                                                    </FormDescription>
+                                                )}
                                             <FormMessage />
                                         </FormItem>
                                     )}

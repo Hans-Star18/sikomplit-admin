@@ -25,9 +25,10 @@ export async function authMiddleware(
     const { location } = opts;
     const token = getAccessToken();
 
-    if (guard.length > 0) {
-        const user = await getUserData();
-        if (!user || !guard.includes(user.role.slug)) {
+    if (!token) {
+        const isAuthenticated = await checkAuthStatus();
+
+        if (!isAuthenticated) {
             throw redirect({
                 to: '/login',
                 search: { redirect: location.pathname },
@@ -35,12 +36,11 @@ export async function authMiddleware(
         }
     }
 
-    if (!token) {
-        const isAuthenticated = await checkAuthStatus();
-
-        if (!isAuthenticated) {
+    if (guard.length > 0) {
+        const user = await getUserData();
+        if (!user || !guard.includes(user.role.slug)) {
             throw redirect({
-                to: '/login',
+                to: '/',
                 search: { redirect: location.pathname },
             });
         }

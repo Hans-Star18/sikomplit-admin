@@ -11,7 +11,6 @@ import {
 import { Input } from '@/components/ui/input';
 import axiosInstance, { setAccessToken } from '@/lib/axios';
 import { cn } from '@/lib/utils';
-import { router } from '@/main';
 import { IconLoader } from '@tabler/icons-react';
 import { type HTMLAttributes, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -45,14 +44,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             const { access_token, expires_in } = response.data.data;
             setAccessToken(access_token, expires_in);
 
-            router.navigate({
-                to: '/',
-            });
-
-            // Refresh halaman untuk memastikan cookie tersimpan dengan benar
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
+            window.location.href = '/';
         } catch (error: any) {
             if (error.response?.status === 422) {
                 const errors = error.response?.data?.errors;
