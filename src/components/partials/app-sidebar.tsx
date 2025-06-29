@@ -9,6 +9,7 @@ import {
 import { useUser } from '@/hooks/use-user';
 import { cn } from '@/lib/utils';
 import {
+    IconDeviceDesktopSearch,
     IconEye,
     IconFile,
     IconFileCheck,
@@ -63,6 +64,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     title: 'Page View',
                     url: '/page-views' as const,
                     icon: IconEye,
+                    visible: user?.role.slug === 'admin',
+                },
+                {
+                    title: 'Survey',
+                    url: '/surveys' as const,
+                    icon: IconDeviceDesktopSearch,
                     visible: user?.role.slug === 'admin',
                 },
             ],

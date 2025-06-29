@@ -11,6 +11,7 @@ import { Route as ResearchDetailRoute } from '@/routes/(dashboard)/research/$slu
 import { Route as ResearchEditRoute } from '@/routes/(dashboard)/research/$slug.edit';
 import { Route as ResearchCreateRoute } from '@/routes/(dashboard)/research/create';
 import { Route as ResearchIndexRoute } from '@/routes/(dashboard)/research/index';
+import { Route as SurveyIndexRoute } from '@/routes/(dashboard)/surveys/index';
 import { Route as UserDetailRoute } from '@/routes/(dashboard)/users/$id';
 import { Route as UserEditRoute } from '@/routes/(dashboard)/users/$id.edit';
 import { Route as UserIndexRoute } from '@/routes/(dashboard)/users/index';
@@ -149,6 +150,15 @@ const pageViewIndexRoute = PageViewIndexRoute.update({
     },
 } as any);
 
+const surveyIndexRoute = SurveyIndexRoute.update({
+    id: 'survey-index',
+    path: '/surveys',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location }, ['admin']);
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -166,4 +176,5 @@ export const routeTree = RootRoute.addChildren([
     feedbackIndexRoute,
     pageViewIndexRoute,
     researchCreateRoute,
+    surveyIndexRoute,
 ]);
