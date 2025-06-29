@@ -37,7 +37,7 @@ const dashboardIndexRoute = DashboardIndexRoute.update({
     path: '/',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin', 'staff']);
     },
 } as any);
 
@@ -46,7 +46,7 @@ const recommendationIndexRoute = RecommendationIndexRoute.update({
     path: '/recommendations',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin', 'staff']);
     },
 } as any);
 
@@ -55,7 +55,7 @@ const recommendationDetailRoute = RecommendationDetailRoute.update({
     path: '/recommendations/$id',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin', 'staff']);
     },
 } as any);
 
@@ -64,7 +64,7 @@ const recommendationEditRoute = RecommendationEditRoute.update({
     path: '/recommendations/$id/edit',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin', 'staff']);
     },
 } as any);
 
@@ -73,7 +73,7 @@ const userIndexRoute = UserIndexRoute.update({
     path: '/users',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -82,7 +82,7 @@ const userDetailRoute = UserDetailRoute.update({
     path: '/users/$id',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -91,7 +91,7 @@ const userEditRoute = UserEditRoute.update({
     path: '/users/$id/edit',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -100,7 +100,7 @@ const researchIndexRoute = ResearchIndexRoute.update({
     path: '/research',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -109,7 +109,7 @@ const researchDetailRoute = ResearchDetailRoute.update({
     path: '/research/$slug',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -118,7 +118,7 @@ const researchCreateRoute = ResearchCreateRoute.update({
     path: '/research/create',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -127,7 +127,7 @@ const researchEditRoute = ResearchEditRoute.update({
     path: '/research/$slug/edit',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -136,7 +136,7 @@ const feedbackIndexRoute = FeedbackIndexRoute.update({
     path: '/feedbacks',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 
@@ -145,7 +145,7 @@ const pageViewIndexRoute = PageViewIndexRoute.update({
     path: '/page-views',
     getParentRoute: () => RootRoute,
     beforeLoad: async ({ location }: LoaderFnContext) => {
-        await authMiddleware({ location });
+        await authMiddleware({ location }, ['admin']);
     },
 } as any);
 

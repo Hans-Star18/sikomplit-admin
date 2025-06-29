@@ -36,11 +36,13 @@ import type { ReactNode } from 'react';
 export function NavGroup({ title, items }: NavGroup) {
     const { state } = useSidebar();
     const href = useLocation({ select: (location) => location.href });
+    const visibleItems = items.filter((item) => item.visible);
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>{title}</SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => {
+                {visibleItems.map((item) => {
                     const key = `${item.title}-${item.url}`;
 
                     if (!item.items)

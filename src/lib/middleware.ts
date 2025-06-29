@@ -1,4 +1,5 @@
 import axiosInstance, { getAccessToken } from '@/lib/axios';
+import { getUserData } from '@/lib/user-service';
 import { redirect } from '@tanstack/react-router';
 
 interface AuthMiddlewareOptions {
@@ -17,9 +18,22 @@ const checkAuthStatus = async () => {
     }
 };
 
-export async function authMiddleware(opts: AuthMiddlewareOptions) {
+export async function authMiddleware(
+    opts: AuthMiddlewareOptions,
+    guard: Array<string> = [],
+) {
     const { location } = opts;
     const token = getAccessToken();
+
+    if (guard.length > 0) {
+        const user = await getUserData();
+        if (!user || !guard.includes(user.role.slug)) {
+            throw redirect({
+                to: '/login',
+                search: { redirect: location.pathname },
+            });
+        }
+    }
 
     if (!token) {
         const isAuthenticated = await checkAuthStatus();

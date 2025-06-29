@@ -6,6 +6,7 @@ import {
     SidebarRail,
     useSidebar,
 } from '@/components/ui/sidebar';
+import { useUser } from '@/hooks/use-user';
 import { cn } from '@/lib/utils';
 import {
     IconEye,
@@ -18,6 +19,55 @@ import {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { state, isMobile } = useSidebar();
+    const user = useUser();
+
+    const navGroups = [
+        {
+            title: 'Menu Utama',
+            items: [
+                {
+                    title: 'Dashboard',
+                    url: '/' as const,
+                    icon: IconLayoutDashboard,
+                    visible:
+                        user?.role.slug === 'admin' ||
+                        user?.role.slug === 'staff',
+                },
+                {
+                    title: 'Permohonan Surat',
+                    url: '/recommendations' as const,
+                    icon: IconFileCheck,
+                    visible:
+                        user?.role.slug === 'admin' ||
+                        user?.role.slug === 'staff',
+                },
+                {
+                    title: 'Pengguna',
+                    url: '/users' as const,
+                    icon: IconUsers,
+                    visible: user?.role.slug === 'admin',
+                },
+                {
+                    title: 'Ringkasan & Flyer',
+                    url: '/research' as const,
+                    icon: IconFile,
+                    visible: user?.role.slug === 'admin',
+                },
+                {
+                    title: 'Feedback',
+                    url: '/feedbacks' as const,
+                    icon: IconMessageCircle,
+                    visible: user?.role.slug === 'admin',
+                },
+                {
+                    title: 'Page View',
+                    url: '/page-views' as const,
+                    icon: IconEye,
+                    visible: user?.role.slug === 'admin',
+                },
+            ],
+        },
+    ];
 
     return (
         <Sidebar collapsible="icon" variant="floating" {...props}>
@@ -42,41 +92,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </Sidebar>
     );
 }
-
-const navGroups = [
-    {
-        title: 'Menu Utama',
-        items: [
-            {
-                title: 'Dashboard',
-                url: '/' as const,
-                icon: IconLayoutDashboard,
-            },
-            {
-                title: 'Permohonan Surat',
-                url: '/recommendations' as const,
-                icon: IconFileCheck,
-            },
-            {
-                title: 'Pengguna',
-                url: '/users' as const,
-                icon: IconUsers,
-            },
-            {
-                title: 'Ringkasan & Flyer',
-                url: '/research' as const,
-                icon: IconFile,
-            },
-            {
-                title: 'Feedback',
-                url: '/feedbacks' as const,
-                icon: IconMessageCircle,
-            },
-            {
-                title: 'Page View',
-                url: '/page-views' as const,
-                icon: IconEye,
-            },
-        ],
-    },
-];
