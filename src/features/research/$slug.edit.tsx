@@ -12,7 +12,11 @@ import {
 import { Input } from '@/components/ui/input';
 import type { Research } from '@/features/research/components/types';
 import axiosInstance from '@/lib/axios';
-import { IconArrowLeft, IconLoader } from '@tabler/icons-react';
+import {
+    IconArrowLeft,
+    IconDeviceFloppy,
+    IconLoader,
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
@@ -177,9 +181,9 @@ export default function ResearchEdit({ slug }: { slug: string }) {
                         />
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex items-center gap-2">
                         <Button
-                            className="mt-2 flex items-center"
+                            className="flex items-center"
                             disabled={isLoadingForm}
                             type="button"
                         >
@@ -193,15 +197,16 @@ export default function ResearchEdit({ slug }: { slug: string }) {
                         </Button>
 
                         <Button
-                            className="mt-2 flex items-center bg-blue-500 text-white hover:bg-blue-600"
+                            className="flex items-center"
                             disabled={isLoadingForm}
                             type="submit"
                             onClick={() => {
                                 form.handleSubmit(onSubmit);
                             }}
                         >
+                            <IconDeviceFloppy className="h-4 w-4" />
                             Simpan{' '}
-                            {isLoading && (
+                            {isLoadingForm && (
                                 <IconLoader className="animate-spin" />
                             )}
                         </Button>

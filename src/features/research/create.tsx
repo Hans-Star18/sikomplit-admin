@@ -13,7 +13,11 @@ import { Input } from '@/components/ui/input';
 import type { ResearchCreate } from '@/features/research/components/types';
 import axiosInstance from '@/lib/axios';
 import { router } from '@/main';
-import { IconArrowLeft, IconLoader } from '@tabler/icons-react';
+import {
+    IconArrowLeft,
+    IconDeviceFloppy,
+    IconLoader,
+} from '@tabler/icons-react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -189,9 +193,9 @@ export default function ResearchCreate() {
                         />
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex items-center gap-2">
                         <Button
-                            className="mt-2 flex items-center"
+                            className="flex items-center"
                             disabled={isLoading}
                             type="button"
                         >
@@ -203,15 +207,14 @@ export default function ResearchCreate() {
                                 Kembali
                             </Link>
                         </Button>
-
                         <Button
-                            className="mt-2 flex items-center bg-blue-500 text-white hover:bg-blue-600"
-                            disabled={isLoading}
                             type="submit"
+                            disabled={isLoading}
                             onClick={() => {
                                 form.handleSubmit(onSubmit);
                             }}
                         >
+                            <IconDeviceFloppy className="h-4 w-4" />
                             Simpan{' '}
                             {isLoading && (
                                 <IconLoader className="animate-spin" />

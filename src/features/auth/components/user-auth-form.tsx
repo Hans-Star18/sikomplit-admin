@@ -48,6 +48,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             router.navigate({
                 to: '/',
             });
+
+            // Refresh halaman untuk memastikan cookie tersimpan dengan benar
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
         } catch (error: any) {
             if (error.response?.status === 422) {
                 const errors = error.response?.data?.errors;
