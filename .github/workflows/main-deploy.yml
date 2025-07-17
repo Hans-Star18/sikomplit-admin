@@ -18,19 +18,14 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: Install dependencies and build
+      - name: npm install, build, and test
         run: |
           npm install
-          npm run build
-
-      - name: Add web.config for Azure App Service
-        run: |
-          echo ^<configuration^>^<system.webServer^>^<rewrite^>^<rules^>^<rule name="SPA" stopProcessing="true"^>^<match url=".*" /^>^<conditions logicalGrouping="MatchAll"^>^<add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" /^>^<add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" /^>^</conditions^>^<action type="Rewrite" url="/index.html" /^>^</rule^>^</rules^>^</rewrite^>^</system.webServer^>^</configuration^> > dist/web.config
+          npm run build --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: |
-          cd dist
-          zip -r ../release.zip .
+        run: cd dist && zip -r ../release.zip . && cd ..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -47,10 +42,17 @@ jobs:
         with:
           name: build
 
+      - name: Unzip artifact for deployment
+        run: unzip release.zip 
+
+      - name: Remove dist folder if exists
+        run: rm -rf dist
+
       - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'sikomplitAdm'
           slot-name: 'Production'
-          package: release.zip
+          package: .
           publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
