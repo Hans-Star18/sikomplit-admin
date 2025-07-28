@@ -46,10 +46,10 @@ export function BarChartComponent({
 }: {
     recommendationTimeRange: RecommendationTimeRange[];
 }) {
+    console.log(recommendationTimeRange);
     const recommendationTimeRangeArray = Object.values(recommendationTimeRange);
 
     const chartData = chartRanges.map(({ label, match }) => {
-        // Jumlahkan count untuk semua item yang match dengan range ini
         const total = recommendationTimeRangeArray
             .filter((item) => match(item.label))
             .reduce((sum, item) => sum + item.count, 0);

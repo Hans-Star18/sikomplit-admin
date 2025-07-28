@@ -195,7 +195,7 @@ export default function Dashboard() {
                                             >
                                                 <div className="flex flex-1 flex-wrap items-center justify-between">
                                                     <div className="max-w-[200px] space-y-1 truncate md:max-w-full">
-                                                        <p className="text-sm leading-none font-medium">
+                                                        <p className="max-w-[400px] truncate text-sm leading-none font-medium">
                                                             {research.title}
                                                         </p>
                                                         <p className="text-muted-foreground flex items-center gap-1 text-xs md:text-sm">
