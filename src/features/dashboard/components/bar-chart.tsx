@@ -46,7 +46,6 @@ export function BarChartComponent({
 }: {
     recommendationTimeRange: RecommendationTimeRange[];
 }) {
-    console.log(recommendationTimeRange);
     const recommendationTimeRangeArray = Object.values(recommendationTimeRange);
 
     const chartData = chartRanges.map(({ label, match }) => {
