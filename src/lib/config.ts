@@ -7,7 +7,8 @@ type Config = {
 const config: Config = {
     api: {
         base_url:
-            import.meta.env.VITE_API_BASE_URL || 'https://localhost:8000/api',
+            import.meta.env.VITE_API_BASE_URL ||
+            'https://sikomplit-g5cfehgpgsc7dfhe.indonesiacentral-01.azurewebsites.net/api/v1',
     },
 };
 
