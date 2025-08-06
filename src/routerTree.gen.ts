@@ -4,6 +4,8 @@ import { Route as LogoutRoute } from '@/routes/(auth)/logout';
 import { Route as FeedbackIndexRoute } from '@/routes/(dashboard)/feedbacks/index';
 import { Route as DashboardIndexRoute } from '@/routes/(dashboard)/index';
 import { Route as PageViewIndexRoute } from '@/routes/(dashboard)/page-views/index';
+import { Route as PosterCreateRoute } from '@/routes/(dashboard)/posters/create';
+import { Route as PosterIndexRoute } from '@/routes/(dashboard)/posters/index';
 import { Route as RecommendationDetailRoute } from '@/routes/(dashboard)/recommendations/$id';
 import { Route as RecommendationEditRoute } from '@/routes/(dashboard)/recommendations/$id.edit';
 import { Route as RecommendationIndexRoute } from '@/routes/(dashboard)/recommendations/index';
@@ -159,6 +161,24 @@ const surveyIndexRoute = SurveyIndexRoute.update({
     },
 } as any);
 
+const posterIndexRoute = PosterIndexRoute.update({
+    id: 'poster-index',
+    path: '/posters',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location }, ['admin']);
+    },
+} as any);
+
+const posterCreateRoute = PosterCreateRoute.update({
+    id: 'poster-create',
+    path: '/posters/create',
+    getParentRoute: () => RootRoute,
+    beforeLoad: async ({ location }: LoaderFnContext) => {
+        await authMiddleware({ location }, ['admin']);
+    },
+} as any);
+
 // Build route tree
 export const routeTree = RootRoute.addChildren([
     dashboardIndexRoute,
@@ -177,4 +197,6 @@ export const routeTree = RootRoute.addChildren([
     pageViewIndexRoute,
     researchCreateRoute,
     surveyIndexRoute,
+    posterIndexRoute,
+    posterCreateRoute,
 ]);
